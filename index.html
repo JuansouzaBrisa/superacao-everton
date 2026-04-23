@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everton Luidy - Superação Challenge</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+        h1 {
+            color: #e91e63;
+            margin-bottom: 0.5rem;
+        }
+        p.subtitle {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        .timer {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+        .timer-unit {
+            background: #fff0f5;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ffc1e3;
+        }
+        .number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: block;
+            color: #c2185b;
+        }
+        .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #888;
+        }
+        .message {
+            font-weight: bold;
+            color: #4caf50;
+            margin-top: 1rem;
+            min-height: 1.5em;
+        }
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        .heart-break {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="heart-break">💔</div>
+        <h1>Everton Luidy</h1>
+        <p class="subtitle">"Totalmente superado" da Ana Flavia</p>
+        
+        <p>Tempo desde que a liberdade (ou o sofrimento) começou:</p>
+        
+        <div class="timer">
+            <div class="timer-unit">
+                <span class="number" id="days">00</span>
+                <span class="label">Dias</span>
+            </div>
+            <div class="timer-unit">
+                <span class="number" id="hours">00</span>
+                <span class="label">Horas</span>
+            </div>
+            <div class="timer-unit">
+                <span class="number" id="minutes">00</span>
+                <span class="label">Minutos</span>
+            </div>
+            <div class="timer-unit">
+                <span class="number" id="seconds">00</span>
+                <span class="label">Segundos</span>
+            </div>
+        </div>
+
+        <div class="message" id="dynamic-message">
+            Verificando nível de superação...
+        </div>
+
+        <div class="footer">
+            Data do término: 08/10/2024 às 18:00
+        </div>
+    </div>
+
+    <script>
+        const startDate = new Date('2024-10-08T18:00:00');
+        
+        const messages = [
+            "Ele jura que nem lembra mais dela...",
+            "Superação nível: Olhando os stories no fake.",
+            "Já apagou as fotos (estão na pasta oculta).",
+            "A Ana Flavia segue vivendo no aluguel grátis na mente dele.",
+            "Superado? Sei... 😂",
+            "Cada segundo é uma vitória (ou uma saudade).",
+            "O coração tá batendo, mas tá chorando."
+        ];
+
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = String(days).padStart(2, '0');
+            document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+
+            // Mudar mensagem a cada 10 segundos
+            if (seconds % 10 === 0) {
+                const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+                document.getElementById('dynamic-message').innerText = randomMsg;
+            }
+        }
+
+        setInterval(updateTimer, 1000);
+        updateTimer();
+    </script>
+</body>
+</html>
