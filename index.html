@@ -7,79 +7,104 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+            background-color: #0a0a0a;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            color: #333;
+            color: #e0e0e0;
         }
         .container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background-color: #1a1a1a;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0, 123, 255, 0.2);
             text-align: center;
-            max-width: 500px;
+            max-width: 600px;
             width: 90%;
+            border: 1px solid #007bff;
         }
         h1 {
-            color: #e91e63;
+            color: #007bff;
             margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         p.subtitle {
             font-style: italic;
-            color: #666;
+            color: #888;
             margin-bottom: 2rem;
         }
         .timer {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            gap: 15px;
             margin-bottom: 2rem;
         }
         .timer-unit {
-            background: #fff0f5;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ffc1e3;
+            background: #252525;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            transition: transform 0.3s ease;
+        }
+        .timer-unit:hover {
+            transform: translateY(-5px);
+            border-color: #007bff;
         }
         .number {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
             display: block;
-            color: #c2185b;
+            color: #007bff;
+            text-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
         }
         .label {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            color: #888;
+            color: #666;
+            margin-top: 5px;
+            display: block;
+        }
+        .detailed-time {
+            background: #111;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 1rem;
+            border-left: 4px solid #007bff;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+        .detailed-time b {
+            color: #007bff;
         }
         .message {
             font-weight: bold;
-            color: #4caf50;
-            margin-top: 1rem;
+            color: #00d4ff;
+            margin: 1.5rem 0;
             min-height: 1.5em;
+            font-size: 1.1rem;
         }
         .footer {
             margin-top: 2rem;
             font-size: 0.8rem;
-            color: #aaa;
+            color: #555;
         }
-        .heart-break {
+        .icon {
             font-size: 3rem;
             margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px #007bff);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="heart-break">💔</div>
+        <div class="icon">🌀</div>
         <h1>Everton Luidy</h1>
-        <p class="subtitle">"Totalmente superado" da Ana Flavia</p>
+        <p class="subtitle">"100% Superado" da Ana Flavia</p>
         
-        <p>Tempo desde que a liberdade (ou o sofrimento) começou:</p>
+        <p>Contagem regressiva da liberdade:</p>
         
         <div class="timer">
             <div class="timer-unit">
@@ -100,12 +125,16 @@
             </div>
         </div>
 
+        <div class="detailed-time" id="detailed-time">
+            Carregando análise profunda...
+        </div>
+
         <div class="message" id="dynamic-message">
-            Verificando nível de superação...
+            Sincronizando memórias...
         </div>
 
         <div class="footer">
-            Data do término: 08/10/2024 às 18:00
+            O fim do ciclo: 08/10/2024 às 18:00
         </div>
     </div>
 
@@ -116,28 +145,48 @@
             "Ele jura que nem lembra mais dela...",
             "Superação nível: Olhando os stories no fake.",
             "Já apagou as fotos (estão na pasta oculta).",
-            "A Ana Flavia segue vivendo no aluguel grátis na mente dele.",
+            "A Ana Flavia segue vivendo de aluguel na mente dele.",
             "Superado? Sei... 😂",
-            "Cada segundo é uma vitória (ou uma saudade).",
-            "O coração tá batendo, mas tá chorando."
+            "Cada segundo é uma vitória (ou uma recaída evitada).",
+            "O coração tá batendo em ritmo de 'saudade do que a gente não viveu'.",
+            "Status: Ouvindo Marília Mendonça e dizendo que é só pelo ritmo."
         ];
 
         function updateTimer() {
             const now = new Date();
             const diff = now - startDate;
 
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-            document.getElementById('days').innerText = String(days).padStart(2, '0');
-            document.getElementById('hours').innerText = String(hours).padStart(2, '0');
-            document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
-            document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+            document.getElementById('days').innerText = String(d).padStart(2, '0');
+            document.getElementById('hours').innerText = String(h).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(m).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(s).padStart(2, '0');
 
-            // Mudar mensagem a cada 10 segundos
-            if (seconds % 10 === 0) {
+            let years = now.getFullYear() - startDate.getFullYear();
+            let months = now.getMonth() - startDate.getMonth();
+            let days = now.getDate() - startDate.getDate();
+
+            if (days < 0) {
+                months--;
+                const lastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+                days += lastMonth.getDate();
+            }
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            let detailedStr = "Tempo exato de superação: ";
+            if (years > 0) detailedStr += `<b>${years}</b> ${years === 1 ? 'ano' : 'anos'}, `;
+            detailedStr += `<b>${months}</b> ${months === 1 ? 'mês' : 'meses'} e <b>${days}</b> ${days === 1 ? 'dia' : 'dias'}.`;
+            
+            document.getElementById('detailed-time').innerHTML = detailedStr;
+
+            if (s % 10 === 0) {
                 const randomMsg = messages[Math.floor(Math.random() * messages.length)];
                 document.getElementById('dynamic-message').innerText = randomMsg;
             }
