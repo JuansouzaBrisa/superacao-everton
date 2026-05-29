@@ -1,150 +1,325 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Everton Luidy - Superação Challenge</title>
+    <title>Desafio de Superação - Everton</title>
     <style>
-        body {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f2f5;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: #333;
+            padding: 20px;
+            transition: background 1s ease;
         }
+
         .container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.15);
             text-align: center;
             max-width: 500px;
-            width: 90%;
+            width: 100%;
+            transition: all 1s ease;
         }
+
+        .heart {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
         h1 {
-            color: #e91e63;
-            margin-bottom: 0.5rem;
+            color: #ff4d6d;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
         }
-        p.subtitle {
-            font-style: italic;
-            color: #666;
-            margin-bottom: 2rem;
+
+        .subtitle {
+            color: #6c757d;
+            font-size: 1rem;
+            margin-bottom: 30px;
         }
-        .timer {
+
+        /* Botão de Meta 600 Dias */
+        .meta-btn {
+            background: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            margin-bottom: 25px;
+            transition: transform 0.2s;
+            animation: pulse 2s infinite;
+        }
+        .meta-btn:hover { transform: scale(1.05); }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 77, 109, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0); }
+        }
+
+        /* Grid do Cronômetro */
+        .timer-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 2rem;
+            gap: 15px;
+            margin-bottom: 30px;
         }
-        .timer-unit {
-            background: #fff0f5;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ffc1e3;
+
+        .timer-box {
+            background: #fff0f3;
+            padding: 15px 10px;
+            border-radius: 12px;
+            border: 1px solid #ffccd5;
         }
-        .number {
-            font-size: 1.5rem;
+
+        .time-number {
+            font-size: 1.8rem;
             font-weight: bold;
+            color: #ff4d6d;
             display: block;
-            color: #c2185b;
         }
-        .label {
-            font-size: 0.7rem;
+
+        .time-label {
+            font-size: 0.75rem;
+            color: #a2a2a2;
             text-transform: uppercase;
-            color: #888;
+            letter-spacing: 1px;
+            margin-top: 5px;
         }
-        .message {
-            font-weight: bold;
-            color: #4caf50;
-            margin-top: 1rem;
-            min-height: 1.5em;
+
+        .message-area {
+            min-height: 50px;
+            font-style: italic;
+            color: #595959;
+            padding: 10px;
+            border-left: 3px solid #ff4d6d;
+            background: #fff8f9;
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
         .footer {
-            margin-top: 2rem;
+            margin-top: 30px;
             font-size: 0.8rem;
-            color: #aaa;
+            color: #adb5bd;
         }
-        .heart-break {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+
+        /* --- ANIMAÇÃO DE CHORO DO BONECO 3D --- */
+        @keyframes sadSobbing {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-5px) rotate(-1deg); }
+            50% { transform: translateY(0) rotate(1deg); }
+            75% { transform: translateY(-2px) rotate(-0.5deg); }
         }
+
+        /* --- ESTILOS DO QUIZ / MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        .modal {
+            background: white; padding: 30px; border-radius: 15px;
+            max-width: 400px; width: 90%; text-align: center;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+        }
+        .modal h3 { margin-bottom: 20px; color: #333; font-size: 1.3rem; line-height: 1.4; }
+        .quiz-btns { display: flex; gap: 10px; justify-content: center; }
+        .quiz-btn {
+            padding: 12px 20px; border: none; border-radius: 8px;
+            cursor: pointer; font-weight: bold; transition: background 0.2s;
+            font-size: 1rem;
+        }
+        .btn-sim { background: #4cc9f0; color: white; }
+        .btn-nao { background: #f72585; color: white; }
+
+        /* Estado Pós-Quiz Crítico (Modo Dark 600 Dias) */
+        body.mode-600 {
+            background: linear-gradient(135deg, #1e070e 0%, #070103 100%);
+        }
+        .container.mode-600 {
+            background: #150a0d;
+            color: #fff;
+            border: 2px solid #f72585;
+            box-shadow: 0 0 25px rgba(247, 37, 133, 0.6);
+        }
+        .container.mode-600 h1 { color: #f72585; }
+        .container.mode-600 .timer-box { background: #221014; border-color: #f72585; }
+        .container.mode-600 .time-number { color: #4cc9f0; }
+        .container.mode-600 .message-area { background: #1b0c10; color: #ddd; border-color: #f72585; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="heart-break">💔</div>
-        <h1>Everton Luidy</h1>
-        <p class="subtitle">"Totalmente superado" da Ana Flavia</p>
+
+    <div class="container" id="main-container">
+        <!-- Botão de Gatilho para a zoeira de 600 dias -->
+        <button class="meta-btn" id="trigger-btn" onclick="openQuiz()" style="display: none;">🎉 ATINGIMOS A META DOS 600 DIAS! 🎉</button>
+
+        <!-- Coração Partido original -->
+        <div class="heart" id="heart-icon">💔</div>
         
-        <p>Tempo desde que a liberdade (ou o sofrimento) começou:</p>
-        
-        <div class="timer">
-            <div class="timer-unit">
-                <span class="number" id="days">00</span>
-                <span class="label">Dias</span>
+        <!-- Imagem 3D customizada com animação de soluço em CSS -->
+        <img src="everton-3d.png" id="sad-clown" style="display: none; width: 280px; max-width: 100%; height: auto; margin: 0 auto 20px auto; border-radius: 15px; animation: sadSobbing 3s ease-in-out infinite; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));" alt="Everton 600 Dias">
+
+        <h1 id="main-title">Desafio de Superação</h1>
+        <div class="subtitle" id="main-subtitle">"Totalmente superado" da Ana Flavia</div>
+
+        <div class="timer-grid">
+            <div class="timer-box">
+                <span class="time-number" id="days">00</span>
+                <span class="time-label">Dias</span>
             </div>
-            <div class="timer-unit">
-                <span class="number" id="hours">00</span>
-                <span class="label">Horas</span>
+            <div class="timer-box">
+                <span class="time-number" id="hours">00</span>
+                <span class="time-label">Horas</span>
             </div>
-            <div class="timer-unit">
-                <span class="number" id="minutes">00</span>
-                <span class="label">Minutos</span>
+            <div class="timer-box">
+                <span class="time-number" id="minutes">00</span>
+                <span class="time-label">Min</span>
             </div>
-            <div class="timer-unit">
-                <span class="number" id="seconds">00</span>
-                <span class="label">Segundos</span>
+            <div class="timer-box">
+                <span class="time-number" id="seconds">00</span>
+                <span class="time-label">Seg</span>
             </div>
         </div>
 
-        <div class="message" id="dynamic-message">
-            Verificando nível de superação...
+        <div class="message-area" id="dynamic-message">
+            Carregando nível de negação...
         </div>
 
         <div class="footer">
-            Data do término: 08/10/2024 às 18:00
+            Início do desafio: 08/10/2024 às 18:00
+        </div>
+    </div>
+
+    <!-- Interface do Quiz Estratégico -->
+    <div class="modal-overlay" id="quiz-modal">
+        <div class="modal">
+            <h3>Everton, seja extremamente sincero...<br>Você superou a Ana Flávia?</h3>
+            <div class="quiz-btns">
+                <button class="quiz-btn btn-sim" onclick="quizAnswer(true)">Sim, com certeza!</button>
+                <button class="quiz-btn btn-nao" onclick="quizAnswer(false)">Não, ainda dói...</button>
+            </div>
         </div>
     </div>
 
     <script>
+        // Data base do término (08 de Outubro de 2024 às 18:00)
         const startDate = new Date('2024-10-08T18:00:00');
-        
+
+        // Frases originais de rotina
         const messages = [
             "Ele jura que nem lembra mais dela...",
             "Superação nível: Olhando os stories no fake.",
-            "Já apagou as fotos (estão na pasta oculta).",
             "A Ana Flavia segue vivendo no aluguel grátis na mente dele.",
-            "Superado? Sei... 😂",
-            "Cada segundo é uma vitória (ou uma saudade).",
-            "O coração tá batendo, mas tá chorando."
+            "Diz que superou, mas ouve a playlist triste de madrugada.",
+            "Bloqueou em tudo, mas decorou o @.",
+            "Coração tá igual wifi de padaria: tentando conectar e caindo."
         ];
+
+        // Frases ácidas exclusivas dos 600 dias
+        const special600Messages = [
+            "Parabéns pelos 600 dias de fingimento profissional!",
+            "600 dias! O aniversário é do término, mas o palhaço é você.",
+            "600 dias sob total dominância mental da Ana Flávia.",
+            "Comunicado oficial: A superação foi adiada por mais 600 dias.",
+            "600 dias chorando no supino e fingindo costume."
+        ];
+
+        let forceMode600 = false;
 
         function updateTimer() {
             const now = new Date();
-            const diff = now - startDate;
+            const difference = now - startDate;
 
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-            document.getElementById('days').innerText = String(days).padStart(2, '0');
-            document.getElementById('hours').innerText = String(hours).padStart(2, '0');
-            document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
-            document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
 
-            // Mudar mensagem a cada 10 segundos
+            // Exibe o botão festivo a partir do momento em que bater os 600 dias
+            if (days >= 600 && !forceMode600) {
+                document.getElementById('trigger-btn').style.display = 'inline-block';
+            }
+
+            // Alterna as mensagens a cada 10 segundos
             if (seconds % 10 === 0) {
-                const randomMsg = messages[Math.floor(Math.random() * messages.length)];
-                document.getElementById('dynamic-message').innerText = randomMsg;
+                const currentPool = (days >= 600 || forceMode600) ? special600Messages : messages;
+                const randomIndex = Math.floor(Math.random() * currentPool.length);
+                document.getElementById('dynamic-message').textContent = currentPool[randomIndex];
             }
         }
 
-        setInterval(updateTimer, 1000);
+        function openQuiz() {
+            document.getElementById('quiz-modal').classList.add('active');
+        }
+
+        function quizAnswer(answeredYes) {
+            document.getElementById('quiz-modal').classList.remove('active');
+            
+            if (answeredYes) {
+                alert("❌ ERRO: Detector de mentiras quebrou! Quem supera não entra em site com contador. Parando de mentir em 3, 2, 1...");
+            } else {
+                alert("🩹 Pelo menos sobrou honestidade! Relaxa, 600 dias é só o aquecimento da reabilitação.");
+            }
+
+            // Desencadeia a mudança visual de crise
+            transformInterface();
+        }
+
+        function transformInterface() {
+            forceMode600 = true;
+            
+            // Ativa o tema dark/neon via classes CSS
+            document.body.classList.add('mode-600');
+            document.getElementById('main-container').classList.add('mode-600');
+            
+            // Esconde os elementos padrão e faz brotar o boneco 3D soluçando
+            document.getElementById('trigger-btn').style.display = 'none';
+            document.getElementById('heart-icon').style.display = 'none';
+            document.getElementById('sad-clown').style.display = 'block';
+            
+            // Muda os títulos da página
+            document.getElementById('main-title').textContent = "🎈 600 DIAS DE RESISTÊNCIA 🎈";
+            document.getElementById('main-subtitle').innerHTML = "Parabéns, Everton!<br>O aniversário é do término, mas o choro na academia é livre.";
+            
+            // Atualiza imediatamente o texto de status para uma frase ácida
+            const randomIndex = Math.floor(Math.random() * special600Messages.length);
+            document.getElementById('dynamic-message').textContent = special600Messages[randomIndex];
+        }
+
+        // Inicializa o relógio
         updateTimer();
+        setInterval(updateTimer, 1000);
     </script>
 </body>
 </html>
