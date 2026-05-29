@@ -51,7 +51,7 @@
             margin-bottom: 30px;
         }
 
-        /* Botão de Meta 600 Dias */
+        /* Botão de Meta (Aparece no dia 600 e continua nos próximos) */
         .meta-btn {
             background: #ff4d6d;
             color: white;
@@ -123,19 +123,19 @@
             color: #adb5bd;
         }
 
-        /* --- ANIMAÇÃO DE CHORO DO BONECO 3D --- */
+        /* --- 🎬 ANIMAÇÃO DE SOLUÇO DO BONECO (CSSAtivo) --- */
         @keyframes sadSobbing {
             0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-5px) rotate(-1deg); }
-            50% { transform: translateY(0) rotate(1deg); }
-            75% { transform: translateY(-2px) rotate(-0.5deg); }
+            25% { transform: translateY(-6px) rotate(-1.5deg); }
+            50% { transform: translateY(0) rotate(1.5deg); }
+            75% { transform: translateY(-3px) rotate(-0.5deg); }
         }
 
         /* --- ESTILOS DO QUIZ / MODAL --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.75);
+            background: rgba(0,0,0,0.8);
             display: flex; justify-content: center; align-items: center;
             z-index: 1000; opacity: 0; pointer-events: none;
             transition: opacity 0.3s ease;
@@ -147,7 +147,7 @@
             max-width: 400px; width: 90%; text-align: center;
             box-shadow: 0 5px 25px rgba(0,0,0,0.3);
         }
-        .modal h3 { margin-bottom: 20px; color: #333; font-size: 1.3rem; line-height: 1.4; }
+        .modal h3 { margin-bottom: 20px; color: #333; font-size: 1.25rem; line-height: 1.4; }
         .quiz-btns { display: flex; gap: 10px; justify-content: center; }
         .quiz-btn {
             padding: 12px 20px; border: none; border-radius: 8px;
@@ -157,33 +157,33 @@
         .btn-sim { background: #4cc9f0; color: white; }
         .btn-nao { background: #f72585; color: white; }
 
-        /* Estado Pós-Quiz Crítico (Modo Dark 600 Dias) */
+        /* MUDANÇA TOTAL DE TEMA (Modo Crise Pós-Quiz) */
         body.mode-600 {
-            background: linear-gradient(135deg, #1e070e 0%, #070103 100%);
+            background: linear-gradient(135deg, #210710 0%, #050103 100%);
         }
         .container.mode-600 {
-            background: #150a0d;
+            background: #14090c;
             color: #fff;
             border: 2px solid #f72585;
-            box-shadow: 0 0 25px rgba(247, 37, 133, 0.6);
+            box-shadow: 0 0 30px rgba(247, 37, 133, 0.7);
         }
         .container.mode-600 h1 { color: #f72585; }
-        .container.mode-600 .timer-box { background: #221014; border-color: #f72585; }
+        .container.mode-600 .timer-box { background: #240f14; border-color: #f72585; }
         .container.mode-600 .time-number { color: #4cc9f0; }
-        .container.mode-600 .message-area { background: #1b0c10; color: #ddd; border-color: #f72585; }
+        .container.mode-600 .message-area { background: #190a0e; color: #eee; border-color: #f72585; }
     </style>
 </head>
 <body>
 
     <div class="container" id="main-container">
-        <!-- Botão de Gatilho para a zoeira de 600 dias -->
-        <button class="meta-btn" id="trigger-btn" onclick="openQuiz()" style="display: none;">🎉 ATINGIMOS A META DOS 600 DIAS! 🎉</button>
+        <!-- O botão usa '>=' para funcionar no dia 600, 601, 602, para sempre -->
+        <button class="meta-btn" id="trigger-btn" onclick="openQuiz()" style="display: none;">🎉 EXPANDIR RELATÓRIO DE 600 DIAS 🎉</button>
 
-        <!-- Coração Partido original -->
+        <!-- Coração Partido Padrão -->
         <div class="heart" id="heart-icon">💔</div>
         
-        <!-- Imagem 3D customizada com animação de soluço em CSS -->
-        <img src="everton-3d.png" id="sad-clown" style="display: none; width: 280px; max-width: 100%; height: auto; margin: 0 auto 20px auto; border-radius: 15px; animation: sadSobbing 3s ease-in-out infinite; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));" alt="Everton 600 Dias">
+        <!-- O bonequinho agora possui a animação 'sadSobbing' aplicada diretamente por código! -->
+        <img src="everton-3d.png" id="sad-clown" style="display: none; width: 280px; max-width: 100%; height: auto; margin: 0 auto 20px auto; border-radius: 15px; animation: sadSobbing 2.5s ease-in-out infinite; filter: drop-shadow(0 10px 25px rgba(0,0,0,0.7));" alt="Everton de Aniversário">
 
         <h1 id="main-title">Desafio de Superação</h1>
         <div class="subtitle" id="main-subtitle">"Totalmente superado" da Ana Flavia</div>
@@ -208,7 +208,7 @@
         </div>
 
         <div class="message-area" id="dynamic-message">
-            Carregando nível de negação...
+            Calculando o nível do apego...
         </div>
 
         <div class="footer">
@@ -216,38 +216,34 @@
         </div>
     </div>
 
-    <!-- Interface do Quiz Estratégico -->
+    <!-- Interface do Quiz -->
     <div class="modal-overlay" id="quiz-modal">
         <div class="modal">
-            <h3>Everton, seja extremamente sincero...<br>Você superou a Ana Flávia?</h3>
+            <h3>Everton, responda com o coração...<br>Você realmente superou a Ana Flávia?</h3>
             <div class="quiz-btns">
-                <button class="quiz-btn btn-sim" onclick="quizAnswer(true)">Sim, com certeza!</button>
-                <button class="quiz-btn btn-nao" onclick="quizAnswer(false)">Não, ainda dói...</button>
+                <button class="quiz-btn btn-sim" onclick="quizAnswer(true)">Sim, superei!</button>
+                <button class="quiz-btn btn-nao" onclick="quizAnswer(false)">Não, confesso...</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Data base do término (08 de Outubro de 2024 às 18:00)
         const startDate = new Date('2024-10-08T18:00:00');
 
-        // Frases originais de rotina
         const messages = [
             "Ele jura que nem lembra mais dela...",
             "Superação nível: Olhando os stories no fake.",
             "A Ana Flavia segue vivendo no aluguel grátis na mente dele.",
             "Diz que superou, mas ouve a playlist triste de madrugada.",
-            "Bloqueou em tudo, mas decorou o @.",
-            "Coração tá igual wifi de padaria: tentando conectar e caindo."
+            "Bloqueou em tudo, mas decorou o @."
         ];
 
-        // Frases ácidas exclusivas dos 600 dias
         const special600Messages = [
-            "Parabéns pelos 600 dias de fingimento profissional!",
-            "600 dias! O aniversário é do término, mas o palhaço é você.",
-            "600 dias sob total dominância mental da Ana Flávia.",
-            "Comunicado oficial: A superação foi adiada por mais 600 dias.",
-            "600 dias chorando no supino e fingindo costume."
+            "Parabéns pelos mais de 600 dias de fingimento!",
+            "600+ dias e o aluguel na mente continua custando R$ 0,00.",
+            "O aniversário passou, mas o choro na academia continua firme.",
+            "Comunicado oficial: A superação foi cancelada por tempo indeterminado.",
+            "600 dias fingindo costume. Nem a Globo contrata um ator desse."
         ];
 
         let forceMode600 = false;
@@ -266,12 +262,12 @@
             document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
             document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
 
-            // Exibe o botão festivo a partir do momento em que bater os 600 dias
-            if (days >= 597 && !forceMode600) {
+            // Mudança crucial: usando '>=' garante que o botão continua aparecendo após o dia 600
+            if (days >= 600 && !forceMode600) {
                 document.getElementById('trigger-btn').style.display = 'inline-block';
             }
 
-            // Alterna as mensagens a cada 10 segundos
+            // Atualiza os textos dinâmicos de 10 em 10 segundos
             if (seconds % 10 === 0) {
                 const currentPool = (days >= 600 || forceMode600) ? special600Messages : messages;
                 const randomIndex = Math.floor(Math.random() * currentPool.length);
@@ -287,37 +283,31 @@
             document.getElementById('quiz-modal').classList.remove('active');
             
             if (answeredYes) {
-                alert("❌ ERRO: Detector de mentiras quebrou! Quem supera não entra em site com contador. Parando de mentir em 3, 2, 1...");
+                alert("❌ DETECTOR DE MENTIRAS: Erro crítico! Quem superou de verdade não entra em link de cronômetro. Parando a nhenhenhe em 3, 2, 1...");
             } else {
-                alert("🩹 Pelo menos sobrou honestidade! Relaxa, 600 dias é só o aquecimento da reabilitação.");
+                alert("🩹 Dignidade recuperada pela honestidade! Mas aceita que 600 dias é só o começo do processo.");
             }
 
-            // Desencadeia a mudança visual de crise
             transformInterface();
         }
 
         function transformInterface() {
             forceMode600 = true;
             
-            // Ativa o tema dark/neon via classes CSS
             document.body.classList.add('mode-600');
             document.getElementById('main-container').classList.add('mode-600');
             
-            // Esconde os elementos padrão e faz brotar o boneco 3D soluçando
             document.getElementById('trigger-btn').style.display = 'none';
             document.getElementById('heart-icon').style.display = 'none';
-            document.getElementById('sad-clown').style.display = 'block';
+            document.getElementById('sad-clown').style.display = 'block'; // Ativa a imagem animada
             
-            // Muda os títulos da página
-            document.getElementById('main-title').textContent = "🎈 600 DIAS DE RESISTÊNCIA 🎈";
-            document.getElementById('main-subtitle').innerHTML = "Parabéns, Everton!<br>O aniversário é do término, mas o choro na academia é livre.";
+            document.getElementById('main-title').textContent = "🎈 MARCA DOS 600+ DIAS 🎈";
+            document.getElementById('main-subtitle').innerHTML = "Parabéns, Everton!<br>O aniversário já passou, mas o luto técnico segue ativo.";
             
-            // Atualiza imediatamente o texto de status para uma frase ácida
             const randomIndex = Math.floor(Math.random() * special600Messages.length);
             document.getElementById('dynamic-message').textContent = special600Messages[randomIndex];
         }
 
-        // Inicializa o relógio
         updateTimer();
         setInterval(updateTimer, 1000);
     </script>
