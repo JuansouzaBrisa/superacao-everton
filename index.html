@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desafio de Superação - Everton</title>
+    <title>Desafio de Superação - Everton Luidy</title>
     <style>
         * {
             margin: 0;
@@ -13,68 +13,85 @@
         }
 
         body {
-            background: linear-gradient(135deg, #ffe5ec 0%, #ffc2d1 100%);
+            background-color: #0d0d0d;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            transition: background 1s ease;
         }
 
         .container {
-            background: white;
+            background-color: #141414;
             padding: 40px 30px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(255, 77, 109, 0.15);
+            border: 1px solid #0077b6;
+            box-shadow: 0 0 30px rgba(0, 119, 182, 0.3);
             text-align: center;
-            max-width: 500px;
+            max-width: 600px;
             width: 100%;
-            transition: all 1s ease;
+            transition: all 0.5s ease;
         }
 
-        .heart {
-            font-size: 3rem;
-            margin-bottom: 10px;
+        .spiral-icon {
+            font-size: 3.5rem;
+            color: #0096c7;
+            margin-bottom: 15px;
             display: inline-block;
+            animation: spin 8s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
         }
 
         h1 {
-            color: #ff4d6d;
-            font-size: 1.8rem;
+            color: #00b4d8;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
             margin-bottom: 5px;
         }
 
         .subtitle {
-            color: #6c757d;
+            color: #90e0ef;
             font-size: 1rem;
-            margin-bottom: 30px;
+            font-style: italic;
+            margin-bottom: 25px;
         }
 
-        /* Botão de Meta (Aparece no dia 600 e continua nos próximos) */
         .meta-btn {
-            background: #ff4d6d;
+            background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
+            padding: 12px 28px;
+            font-size: 0.95rem;
             font-weight: bold;
-            border-radius: 50px;
+            letter-spacing: 1px;
+            border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
             margin-bottom: 25px;
-            transition: transform 0.2s;
-            animation: pulse 2s infinite;
+            transition: all 0.3s;
+            animation: pulseBlue 2s infinite;
         }
-        .meta-btn:hover { transform: scale(1.05); }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 77, 109, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 77, 109, 0); }
+        .meta-btn:hover { 
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 180, 216, 0.7);
         }
 
-        /* Grid do Cronômetro */
+        @keyframes pulseBlue {
+            0% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0.6); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 180, 216, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 180, 216, 0); }
+        }
+
+        .counter-title {
+            color: #a2a2a2;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
         .timer-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -83,59 +100,83 @@
         }
 
         .timer-box {
-            background: #fff0f3;
-            padding: 15px 10px;
+            background-color: #1a1a1a;
+            padding: 20px 10px;
             border-radius: 12px;
-            border: 1px solid #ffccd5;
+            border: 1px solid #262626;
         }
 
         .time-number {
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: bold;
-            color: #ff4d6d;
+            color: #00b4d8;
             display: block;
         }
 
         .time-label {
-            font-size: 0.75rem;
-            color: #a2a2a2;
+            font-size: 0.7rem;
+            color: #666;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-top: 5px;
         }
 
         .message-area {
-            min-height: 50px;
-            font-style: italic;
-            color: #595959;
-            padding: 10px;
-            border-left: 3px solid #ff4d6d;
-            background: #fff8f9;
+            min-height: 55px;
+            color: #caf0f8;
+            font-size: 0.95rem;
+            padding: 15px;
+            border-left: 4px solid #00b4d8;
+            background-color: #1a1a1a;
             border-radius: 0 8px 8px 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .highlight-phrase {
+            color: #00b4d8;
+            font-weight: bold;
+            font-size: 1.05rem;
+            margin-bottom: 25px;
         }
 
         .footer {
-            margin-top: 30px;
             font-size: 0.8rem;
-            color: #adb5bd;
+            color: #444;
         }
 
-        /* --- 🎬 ANIMAÇÃO DE SOLUÇO DO BONECO (CSSAtivo) --- */
-        @keyframes sadSobbing {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-6px) rotate(-1.5deg); }
-            50% { transform: translateY(0) rotate(1.5deg); }
-            75% { transform: translateY(-3px) rotate(-0.5deg); }
+        /* --- CORREÇÃO AQUI: display: block faz a animação CSS e JS funcionar na imagem --- */
+        #sad-clown {
+            display: none;
+            width: 250px;
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto 20px auto;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+            animation: petIdleCry 3s ease-in-out infinite;
         }
 
-        /* --- ESTILOS DO QUIZ / MODAL --- */
+        @keyframes petIdleCry {
+            0%, 100 Triangles { transform: scale(1) translateY(0) rotate(0deg); }
+            25% { transform: scale(1.02) translateY(-5px) rotate(-1.5deg); }
+            50% { transform: scale(1) translateY(0) rotate(1.5deg); }
+            75% { transform: scale(1.01) translateY(-2px) rotate(-0.5deg); }
+        }
+
+        #sad-clown:active {
+            transform: scale(0.9) translateY(8px) !important;
+        }
+
+        /* --- INTERFACE DO QUIZ --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.85);
             display: flex; justify-content: center; align-items: center;
             z-index: 1000; opacity: 0; pointer-events: none;
             transition: opacity 0.3s ease;
@@ -143,50 +184,45 @@
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         
         .modal {
-            background: white; padding: 30px; border-radius: 15px;
-            max-width: 400px; width: 90%; text-align: center;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+            background: #141414; padding: 35px; border-radius: 15px;
+            max-width: 420px; width: 90%; text-align: center;
+            border: 1px solid #0077b6;
+            box-shadow: 0 0 25px rgba(0, 119, 182, 0.4);
         }
-        .modal h3 { margin-bottom: 20px; color: #333; font-size: 1.25rem; line-height: 1.4; }
-        .quiz-btns { display: flex; gap: 10px; justify-content: center; }
+        .modal h3 { margin-bottom: 25px; color: #caf0f8; font-size: 1.25rem; line-height: 1.4; }
+        .quiz-btns { display: flex; gap: 15px; justify-content: center; }
         .quiz-btn {
-            padding: 12px 20px; border: none; border-radius: 8px;
-            cursor: pointer; font-weight: bold; transition: background 0.2s;
-            font-size: 1rem;
+            padding: 12px 24px; border: none; border-radius: 6px;
+            cursor: pointer; font-weight: bold; transition: all 0.2s;
+            font-size: 0.95rem;
         }
-        .btn-sim { background: #4cc9f0; color: white; }
-        .btn-nao { background: #f72585; color: white; }
+        .btn-sim { background: #0077b6; color: white; }
+        .btn-sim:hover { background: #0096c7; }
+        .btn-nao { background: #333; color: #a2a2a2; }
+        .btn-nao:hover { background: #444; color: #fff; }
 
-        /* MUDANÇA TOTAL DE TEMA (Modo Crise Pós-Quiz) */
-        body.mode-600 {
-            background: linear-gradient(135deg, #210710 0%, #050103 100%);
+        .container.alert-mode {
+            border-color: #d90429;
+            box-shadow: 0 0 35px rgba(217, 4, 41, 0.4);
         }
-        .container.mode-600 {
-            background: #14090c;
-            color: #fff;
-            border: 2px solid #f72585;
-            box-shadow: 0 0 30px rgba(247, 37, 133, 0.7);
-        }
-        .container.mode-600 h1 { color: #f72585; }
-        .container.mode-600 .timer-box { background: #240f14; border-color: #f72585; }
-        .container.mode-600 .time-number { color: #4cc9f0; }
-        .container.mode-600 .message-area { background: #190a0e; color: #eee; border-color: #f72585; }
+        .container.alert-mode h1 { color: #d90429; }
+        .container.alert-mode .time-number { color: #d90429; }
     </style>
 </head>
 <body>
 
     <div class="container" id="main-container">
-        <!-- O botão usa '>=' para funcionar no dia 600, 601, 602, para sempre -->
-        <button class="meta-btn" id="trigger-btn" onclick="openQuiz()" style="display: none;">🎉 EXPANDIR RELATÓRIO DE 600 DIAS 🎉</button>
+        <!-- Alterado para aceitar qualquer meta de teste -->
+        <button class="meta-btn" id="trigger-btn" onclick="openQuiz()" style="display: none;">🎉 EXPANDIR RELATÓRIO DE METAS 🎉</button>
 
-        <!-- Coração Partido Padrão -->
-        <div class="heart" id="heart-icon">💔</div>
+        <div class="spiral-icon" id="spiral-logo">🌀</div>
         
-        <!-- O bonequinho agora possui a animação 'sadSobbing' aplicada diretamente por código! -->
-        <img src="everton-3d.png" id="sad-clown" style="display: none; width: 280px; max-width: 100%; height: auto; margin: 0 auto 20px auto; border-radius: 15px; animation: sadSobbing 2.5s ease-in-out infinite; filter: drop-shadow(0 10px 25px rgba(0,0,0,0.7));" alt="Everton de Aniversário">
+        <img src="everton-3d.png" id="sad-clown" alt="Everton Mascote Pet" title="Passe o mouse ou clique em mim!">
 
-        <h1 id="main-title">Desafio de Superação</h1>
-        <div class="subtitle" id="main-subtitle">"Totalmente superado" da Ana Flavia</div>
+        <h1 id="main-title">Everton Luidy</h1>
+        <div class="subtitle" id="main-subtitle">"100% Superado" da Ana Flavia</div>
+
+        <div class="counter-title" id="counter-desc">Contagem regressiva da liberdade:</div>
 
         <div class="timer-grid">
             <div class="timer-box">
@@ -208,20 +244,23 @@
         </div>
 
         <div class="message-area" id="dynamic-message">
-            Calculando o nível do apego...
+            Analisando bancos de dados de arquivos ocultos...
+        </div>
+
+        <div class="highlight-phrase" id="bottom-phrase">
+            Já apagou as fotos (estão na pasta oculta).
         </div>
 
         <div class="footer">
-            Início do desafio: 08/10/2024 às 18:00
+            O fim do ciclo: 08/10/2024 às 18:00
         </div>
     </div>
 
-    <!-- Interface do Quiz -->
     <div class="modal-overlay" id="quiz-modal">
         <div class="modal">
-            <h3>Everton, responda com o coração...<br>Você realmente superou a Ana Flávia?</h3>
+            <h3>Everton, de forma honesta...<br>Você realmente superou a Ana Flávia?</h3>
             <div class="quiz-btns">
-                <button class="quiz-btn btn-sim" onclick="quizAnswer(true)">Sim, superei!</button>
+                <button class="quiz-btn btn-sim" onclick="quizAnswer(true)">Sim, totalmente!</button>
                 <button class="quiz-btn btn-nao" onclick="quizAnswer(false)">Não, confesso...</button>
             </div>
         </div>
@@ -230,46 +269,49 @@
     <script>
         const startDate = new Date('2024-10-08T18:00:00');
 
+        // Mude aqui para testar! Se colocar 590, o botão aparece hoje. No domingo, mude de volta para 600!
+        const TARGET_DAYS = 590; 
+
         const messages = [
-            "Ele jura que nem lembra mais dela...",
-            "Superação nível: Olhando os stories no fake.",
-            "A Ana Flavia segue vivendo no aluguel grátis na mente dele.",
+            "Tempo exato de superação analítica em andamento.",
+            "Varredura concluída: 0 indícios reais de esquecimento.",
             "Diz que superou, mas ouve a playlist triste de madrugada.",
-            "Bloqueou em tudo, mas decorou o @."
+            "Ele jura que nem lembra mais dela...",
+            "A Ana Flavia segue vivendo no aluguel grátis na mente dele."
         ];
 
-        const special600Messages = [
-            "Parabéns pelos mais de 600 dias de fingimento!",
-            "600+ dias e o aluguel na mente continua custando R$ 0,00.",
-            "O aniversário passou, mas o choro na academia continua firme.",
-            "Comunicado oficial: A superação foi cancelada por tempo indeterminado.",
-            "600 dias fingindo costume. Nem a Globo contrata um ator desse."
-        ];
-
-        let forceMode600 = false;
+        let forceMode = false;
+        let globalDays = 0;
 
         function updateTimer() {
             const now = new Date();
             const difference = now - startDate;
 
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            globalDays = Math.floor(difference / (1000 * 60 * 60 * 24));
             const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('days').textContent = String(globalDays).padStart(2, '0');
             document.getElementById('hours').textContent = String(hours).padStart(2, '0');
             document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
             document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
 
-            // Mudança crucial: usando '>=' garante que o botão continua aparecendo após o dia 600
-            if (days >= 600 && !forceMode600) {
+            if (globalDays >= TARGET_DAYS && !forceMode) {
                 document.getElementById('trigger-btn').style.display = 'inline-block';
             }
 
-            // Atualiza os textos dinâmicos de 10 em 10 segundos
             if (seconds % 10 === 0) {
-                const currentPool = (days >= 600 || forceMode600) ? special600Messages : messages;
+                // CORREÇÃO: Gera frases dinâmicas baseadas no número real atual do contador
+                const specialMessages = [
+                    `Atenção: ${globalDays} dias fingindo costume com maestria.`,
+                    `O contador marca ${globalDays} dias, mas o aluguel mental continua grátis.`,
+                    "O pet do sistema detectou recaídas emocionais recentes.",
+                    `Parabéns pelos mais de ${globalDays} dias de fingimento profissional!`,
+                    `Fase de ${globalDays} dias: Nível de negação continua no máximo.`
+                ];
+
+                const currentPool = (globalDays >= TARGET_DAYS || forceMode) ? specialMessages : messages;
                 const randomIndex = Math.floor(Math.random() * currentPool.length);
                 document.getElementById('dynamic-message').textContent = currentPool[randomIndex];
             }
@@ -283,29 +325,48 @@
             document.getElementById('quiz-modal').classList.remove('active');
             
             if (answeredYes) {
-                alert("❌ DETECTOR DE MENTIRAS: Erro crítico! Quem superou de verdade não entra em link de cronômetro. Parando a nhenhenhe em 3, 2, 1...");
+                alert("❌ SISTEMA DE VERIFICAÇÃO: Mentira detectada. Quem supera não clica em botões interativos para provar nada. Iniciando penalidade...");
             } else {
-                alert("🩹 Dignidade recuperada pela honestidade! Mas aceita que 600 dias é só o começo do processo.");
+                alert(`🩹 Humildade computada com sucesso! Mas saiba que ${globalDays} dias é só o começo do tratamento.`);
             }
 
             transformInterface();
         }
 
         function transformInterface() {
-            forceMode600 = true;
+            forceMode = true;
             
-            document.body.classList.add('mode-600');
-            document.getElementById('main-container').classList.add('mode-600');
-            
+            document.getElementById('main-container').classList.add('alert-mode');
             document.getElementById('trigger-btn').style.display = 'none';
-            document.getElementById('heart-icon').style.display = 'none';
-            document.getElementById('sad-clown').style.display = 'block'; // Ativa a imagem animada
+            document.getElementById('spiral-logo').style.display = 'none';
             
-            document.getElementById('main-title').textContent = "🎈 MARCA DOS 600+ DIAS 🎈";
-            document.getElementById('main-subtitle').innerHTML = "Parabéns, Everton!<br>O aniversário já passou, mas o luto técnico segue ativo.";
+            const pet = document.getElementById('sad-clown');
+            pet.style.display = 'block'; // Mostra como bloco para aceitar animação!
+
+            // COMPORTAMENTO INTERATIVO DO PET:
+            pet.addEventListener('mouseenter', () => {
+                const randomRotate = (Math.random() * 24) - 12; 
+                pet.style.transform = `scale(1.1) translateY(-15px) rotate(${randomRotate}deg)`;
+            });
+
+            pet.addEventListener('mouseleave', () => {
+                pet.style.transform = 'scale(1) translateY(0) rotate(0deg)';
+            });
             
-            const randomIndex = Math.floor(Math.random() * special600Messages.length);
-            document.getElementById('dynamic-message').textContent = special600Messages[randomIndex];
+            // CORREÇÃO: Altera os títulos usando o número real dinâmico dos dias atuais!
+            document.getElementById('main-title').textContent = `MODO CRISE: ${globalDays}+ DIAS`;
+            document.getElementById('main-subtitle').innerHTML = `Mascote do sistema ativado.<br>Chegamos a marca de ${globalDays} dias e o choro é livre.`;
+            document.getElementById('counter-desc').textContent = "Tempo oficial de negação crônica:";
+            document.getElementById('bottom-phrase').textContent = "⚠️ Alerta: O pet sabe de tudo o que você faz no Instagram.";
+            
+            // Força atualização imediata da frase com os dias certos
+            const specialMessages = [
+                `Atenção: ${globalDays} dias fingindo costume com maestria.`,
+                `O contador marca ${globalDays} dias, mas o aluguel mental continua grátis.`,
+                "O pet do sistema detectou recaídas emocionais recentes."
+            ];
+            const randomIndex = Math.floor(Math.random() * specialMessages.length);
+            document.getElementById('dynamic-message').textContent = specialMessages[randomIndex];
         }
 
         updateTimer();
