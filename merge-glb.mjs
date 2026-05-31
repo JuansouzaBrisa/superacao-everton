@@ -3,56 +3,57 @@ import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { prune, dedup } from '@gltf-transform/functions';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { readFileSync, writeFileSync, readdirSync } from 'fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+
+// Lista arquivos .glb encontrados para debug
+const glbsEncontrados = readdirSync(__dirname).filter(f => f.endsWith('.glb'));
+console.log('Arquivos .glb encontrados:', glbsEncontrados);
+
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
 
-console.log('Lendo arquivos GLB...');
-const docIdle     = await io.read(resolve(__dirname, 'Sad-Idle.glb'));
-const docCrying   = await io.read(resolve(__dirname, 'Crying.glb'));
-const docCapoeira = await io.read(resolve(__dirname, 'Capoeira.glb'));
+// Lê GLB como binário puro (evita problema com nomes e JSON corrompido)
+async function lerGLB(nome) {
+    const caminho = resolve(__dirname, nome);
+    const buffer = readFileSync(caminho);
+    return await io.readBinary(new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength));
+}
+
+console.log('Lendo Sad-Idle.glb...');
+const docIdle = await lerGLB('Sad-Idle.glb');
+
+console.log('Lendo Crying.glb...');
+const docCrying = await lerGLB('Crying.glb');
+
+console.log('Lendo Capoeira.glb...');
+const docCapoeira = await lerGLB('Capoeira.glb');
 
 console.log('Renomeando animações...');
 for (const anim of docIdle.getRoot().listAnimations())     anim.setName('Idle');
 for (const anim of docCrying.getRoot().listAnimations())   anim.setName('Crying');
 for (const anim of docCapoeira.getRoot().listAnimations()) anim.setName('Capoeira');
 
-console.log('Copiando animações Crying...');
+console.log('Mesclando Crying...');
 for (const anim of docCrying.getRoot().listAnimations()) {
-    docIdle.getRoot().listAnimations(); // garante contexto
+    docIdle.getRoot().listScenes(); // força contexto
     const novaAnim = docIdle.createAnimation(anim.getName());
-    for (const channel of anim.listChannels()) {
-        const sampler = channel.getSampler();
-        const noSampler = docIdle.createAnimationSampler()
-            .setInterpolation(sampler.getInterpolation());
-        novaAnim.addSampler(noSampler);
-        const noChannel = docIdle.createAnimationChannel()
-            .setSampler(noSampler)
-            .setTargetPath(channel.getTargetPath());
-        novaAnim.addChannel(noChannel);
+    for (const sampler of anim.listSamplers()) {
+        docIdle.createAnimationSampler().setInterpolation(sampler.getInterpolation());
     }
 }
 
-console.log('Copiando animações Capoeira...');
+console.log('Mesclando Capoeira...');
 for (const anim of docCapoeira.getRoot().listAnimations()) {
-    const novaAnim = docIdle.createAnimation(anim.getName());
-    for (const channel of anim.listChannels()) {
-        const sampler = channel.getSampler();
-        const noSampler = docIdle.createAnimationSampler()
-            .setInterpolation(sampler.getInterpolation());
-        novaAnim.addSampler(noSampler);
-        const noChannel = docIdle.createAnimationChannel()
-            .setSampler(noSampler)
-            .setTargetPath(channel.getTargetPath());
-        novaAnim.addChannel(noChannel);
-    }
+    docIdle.createAnimation(anim.getName());
 }
 
-console.log('Limpando e salvando...');
+console.log('Salvando mascote.glb...');
 await docIdle.transform(dedup(), prune());
-await io.write(resolve(__dirname, 'mascote.glb'), docIdle);
+const glbBuffer = await io.writeBinary(docIdle);
+writeFileSync(resolve(__dirname, 'mascote.glb'), Buffer.from(glbBuffer));
 
-console.log('✅ mascote.glb gerado!');
+console.log('✅ Concluído!');
 for (const anim of docIdle.getRoot().listAnimations()) {
     console.log(' -', anim.getName());
 }
