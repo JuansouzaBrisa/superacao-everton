@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,6 +8,9 @@
 
     <!-- Biblioteca Oficial do Google para ler o arquivo .glb em 3D -->
     <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
+    <!-- Pré-carrega o modelo único assim que o HTML é parseado -->
+    <link rel="preload" href="mascote.glb" as="fetch" crossorigin="anonymous">
 
     <style>
         * {
@@ -315,7 +319,8 @@
             -->
             <model-viewer
                 id="mascote-3d"
-                src="Sad Idle.glb"
+                src="mascote.glb"
+                animation-name="Idle"
                 alt="Everton Mascote 3D"
                 camera-controls
                 disable-zoom
@@ -333,9 +338,9 @@
             </model-viewer>
 
             <div class="animation-btns">
-                <button class="anim-btn" id="btn-chorar"   onclick="trocarAnimacao('Crying.glb',   this)">Chorar</button>
-                <button class="anim-btn" id="btn-capoeira" onclick="trocarAnimacao('Capoeira.glb', this)">Capoeira</button>
-                <button class="anim-btn active" id="btn-parar" onclick="trocarAnimacao('Sad Idle.glb', this)">Parar</button>
+                <button class="anim-btn" id="btn-chorar"   onclick="trocarAnimacao('Crying',   this)">Chorar</button>
+                <button class="anim-btn" id="btn-capoeira" onclick="trocarAnimacao('Capoeira', this)">Capoeira</button>
+                <button class="anim-btn active" id="btn-parar" onclick="trocarAnimacao('Idle',    this)">Parar</button>
             </div>
         </div>
 
@@ -483,22 +488,12 @@
         }
 
         // ─── Troca de Animação do Mascote ──────────────────────────────────────────
-        function trocarAnimacao(nomeArquivo, btnClicado) {
-            const mascote  = document.getElementById('mascote-3d');
-            const loading  = document.getElementById('mascote-loading');
+        // Agora usa animationName — modelo único, troca instantânea sem novo download
+        function trocarAnimacao(nomeAnimacao, btnClicado) {
+            const mascote = document.getElementById('mascote-3d');
 
-            // Mostra spinner durante a troca
-            loading.style.display = 'flex';
-            mascote.style.display = 'none';
-
-            mascote.src = nomeArquivo;
-
-            mascote.addEventListener('load', function onLoad() {
-                loading.style.display = 'none';
-                mascote.style.display = 'block';
-                mascote.play({ repetitions: Infinity });
-                mascote.removeEventListener('load', onLoad);
-            });
+            mascote.animationName = nomeAnimacao;
+            mascote.play({ repetitions: Infinity });
 
             // Feedback visual: marca o botão ativo
             document.querySelectorAll('.anim-btn').forEach(btn => btn.classList.remove('active'));
@@ -511,7 +506,7 @@
             const mascote = document.getElementById('mascote-3d');
             if (mascote) {
                 mascote.addEventListener('dblclick', function () {
-                    trocarAnimacao('Capoeira.glb', document.getElementById('btn-capoeira'));
+                    trocarAnimacao('Capoeira', document.getElementById('btn-capoeira'));
                 });
             }
         });
@@ -519,6 +514,17 @@
         // ─── Inicialização ─────────────────────────────────────────────────────────
         updateTimer();
         setInterval(updateTimer, 1000);
+
+        // Pre-cache dos .glb em background
+        // Faz o download silencioso de todos os modelos assim que a pagina carrega.
+        // Quando o usuario abrir o mascote ou trocar animacao, o arquivo ja esta
+        // no cache do navegador - carregamento instantaneo.
+        // Pre-cache do modelo único
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                fetch('mascote.glb', { cache: 'force-cache' }).catch(function () {});
+            }, 1500);
+        });
     </script>
 
 </body>
