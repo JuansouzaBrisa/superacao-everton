@@ -1,7 +1,7 @@
 name: Merge GLB Animations
 
 on:
-  workflow_dispatch: # Roda manualmente pelo botão no GitHub
+  workflow_dispatch:
 
 jobs:
   merge:
@@ -16,13 +16,12 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Instalar gltf-transform CLI
-        run: npm install -g @gltf-transform/cli
+      - name: Instalar dependências localmente
+        run: |
+          npm init -y
+          npm install @gltf-transform/core @gltf-transform/extensions @gltf-transform/functions meshoptimizer
 
-      - name: Instalar meshoptimizer
-        run: npm install -g meshoptimizer
-
-      - name: Mesclar animações em um único GLB
+      - name: Rodar script de merge
         run: node merge-glb.mjs
 
       - name: Commit e push do mascote.glb
