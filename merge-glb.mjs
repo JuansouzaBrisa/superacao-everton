@@ -1,65 +1,58 @@
 import { NodeIO } from '@gltf-transform/core';
 import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
 import { prune, dedup } from '@gltf-transform/functions';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
 
-// Carrega os 3 documentos
-const docIdle     = await io.read('Sad Idle.glb');
-const docCrying   = await io.read('Crying.glb');
-const docCapoeira = await io.read('Capoeira.glb');
+console.log('Lendo arquivos GLB...');
+const docIdle     = await io.read(resolve(__dirname, 'Sad-Idle.glb'));
+const docCrying   = await io.read(resolve(__dirname, 'Crying.glb'));
+const docCapoeira = await io.read(resolve(__dirname, 'Capoeira.glb'));
 
-// Renomeia as animações para nomes limpos
-for (const anim of docIdle.getRoot().listAnimations()) {
-    anim.setName('Idle');
-}
+console.log('Renomeando animações...');
+for (const anim of docIdle.getRoot().listAnimations())     anim.setName('Idle');
+for (const anim of docCrying.getRoot().listAnimations())   anim.setName('Crying');
+for (const anim of docCapoeira.getRoot().listAnimations()) anim.setName('Capoeira');
+
+console.log('Copiando animações Crying...');
 for (const anim of docCrying.getRoot().listAnimations()) {
-    anim.setName('Crying');
-}
-for (const anim of docCapoeira.getRoot().listAnimations()) {
-    anim.setName('Capoeira');
-}
-
-// Pega o documento base (Idle) e copia as animações dos outros dois
-const root = docIdle.getRoot();
-
-// Função para copiar animações entre documentos
-function copiarAnimacoes(docOrigem, docDestino) {
-    const rootOrigem  = docOrigem.getRoot();
-    const rootDestino = docDestino.getRoot();
-
-    for (const anim of rootOrigem.listAnimations()) {
-        // Cria nova animação no documento destino
-        const novaAnim = docDestino.createAnimation(anim.getName());
-
-        for (const channel of anim.listChannels()) {
-            const sampler  = channel.getSampler();
-            const noSampler = docDestino.createAnimationSampler()
-                .setInput(sampler.getInput())
-                .setOutput(sampler.getOutput())
-                .setInterpolation(sampler.getInterpolation());
-
-            const noChannel = docDestino.createAnimationChannel()
-                .setSampler(noSampler)
-                .setTargetPath(channel.getTargetPath());
-
-            novaAnim.addSampler(noSampler).addChannel(noChannel);
-        }
+    docIdle.getRoot().listAnimations(); // garante contexto
+    const novaAnim = docIdle.createAnimation(anim.getName());
+    for (const channel of anim.listChannels()) {
+        const sampler = channel.getSampler();
+        const noSampler = docIdle.createAnimationSampler()
+            .setInterpolation(sampler.getInterpolation());
+        novaAnim.addSampler(noSampler);
+        const noChannel = docIdle.createAnimationChannel()
+            .setSampler(noSampler)
+            .setTargetPath(channel.getTargetPath());
+        novaAnim.addChannel(noChannel);
     }
 }
 
-// Merge manual: copia animações para o documento base
-copiarAnimacoes(docCrying,   docIdle);
-copiarAnimacoes(docCapoeira, docIdle);
+console.log('Copiando animações Capoeira...');
+for (const anim of docCapoeira.getRoot().listAnimations()) {
+    const novaAnim = docIdle.createAnimation(anim.getName());
+    for (const channel of anim.listChannels()) {
+        const sampler = channel.getSampler();
+        const noSampler = docIdle.createAnimationSampler()
+            .setInterpolation(sampler.getInterpolation());
+        novaAnim.addSampler(noSampler);
+        const noChannel = docIdle.createAnimationChannel()
+            .setSampler(noSampler)
+            .setTargetPath(channel.getTargetPath());
+        novaAnim.addChannel(noChannel);
+    }
+}
 
-// Limpa duplicatas e nodes não usados
+console.log('Limpando e salvando...');
 await docIdle.transform(dedup(), prune());
+await io.write(resolve(__dirname, 'mascote.glb'), docIdle);
 
-// Salva o arquivo final
-await io.write('mascote.glb', docIdle);
-
-console.log('✅ mascote.glb gerado com sucesso!');
-console.log('Animações disponíveis:');
+console.log('✅ mascote.glb gerado!');
 for (const anim of docIdle.getRoot().listAnimations()) {
     console.log(' -', anim.getName());
 }
