@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desafio de Superação - Everton Luidy</title>
+    
+    <!-- Biblioteca Oficial do Google para ler o arquivo .glb em 3D -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -19,6 +23,7 @@
             justify-content: center;
             align-items: center;
             padding: 20px;
+            overflow-x: hidden;
         }
 
         .container {
@@ -31,6 +36,8 @@
             max-width: 600px;
             width: 100%;
             transition: all 0.5s ease;
+            position: relative;
+            z-index: 10;
         }
 
         .spiral-icon {
@@ -147,31 +154,6 @@
             color: #444;
         }
 
-        /* --- CORREÇÃO AQUI: display: block faz a animação CSS e JS funcionar na imagem --- */
-        #sad-clown {
-            display: none;
-            width: 250px;
-            max-width: 100%;
-            height: auto;
-            margin: 0 auto 20px auto;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
-            animation: petIdleCry 3s ease-in-out infinite;
-        }
-
-        @keyframes petIdleCry {
-            0%, 100 Triangles { transform: scale(1) translateY(0) rotate(0deg); }
-            25% { transform: scale(1.02) translateY(-5px) rotate(-1.5deg); }
-            50% { transform: scale(1) translateY(0) rotate(1.5deg); }
-            75% { transform: scale(1.01) translateY(-2px) rotate(-0.5deg); }
-        }
-
-        #sad-clown:active {
-            transform: scale(0.9) translateY(8px) !important;
-        }
-
         /* --- INTERFACE DO QUIZ --- */
         .modal-overlay {
             position: fixed;
@@ -212,12 +194,21 @@
 <body>
 
     <div class="container" id="main-container">
-        <!-- Alterado para aceitar qualquer meta de teste -->
         <button class="meta-btn" id="trigger-btn" onclick="openQuiz()" style="display: none;">🎉 EXPANDIR RELATÓRIO DE METAS 🎉</button>
 
         <div class="spiral-icon" id="spiral-logo">🌀</div>
         
-        <img src="everton-3d.png" id="sad-clown" alt="Everton Mascote Pet" title="Passe o mouse ou clique em mim!">
+        <!-- O MASCOTE 3D (Começa oculto) -->
+        <div id="pet-container" style="display: none; margin: 0 auto 20px auto; width: 100%; height: 350px;">
+            <model-viewer 
+                src="everton.glb" 
+                alt="Everton Mascote 3D" 
+                auto-rotate 
+                camera-controls 
+                disable-zoom
+                style="width: 100%; height: 100%; background-color: transparent; outline: none;">
+            </model-viewer>
+        </div>
 
         <h1 id="main-title">Everton Luidy</h1>
         <div class="subtitle" id="main-subtitle">"100% Superado" da Ana Flavia</div>
@@ -256,6 +247,7 @@
         </div>
     </div>
 
+    <!-- Modal do Quiz -->
     <div class="modal-overlay" id="quiz-modal">
         <div class="modal">
             <h3>Everton, de forma honesta...<br>Você realmente superou a Ana Flávia?</h3>
@@ -269,7 +261,7 @@
     <script>
         const startDate = new Date('2024-10-08T18:00:00');
 
-        // Mude aqui para testar! Se colocar 590, o botão aparece hoje. No domingo, mude de volta para 600!
+        // Mudei de volta para 600 ou deixe em 590 se quiser continuar testando
         const TARGET_DAYS = 590; 
 
         const messages = [
@@ -302,7 +294,6 @@
             }
 
             if (seconds % 10 === 0) {
-                // CORREÇÃO: Gera frases dinâmicas baseadas no número real atual do contador
                 const specialMessages = [
                     `Atenção: ${globalDays} dias fingindo costume com maestria.`,
                     `O contador marca ${globalDays} dias, mas o aluguel mental continua grátis.`,
@@ -340,33 +331,20 @@
             document.getElementById('trigger-btn').style.display = 'none';
             document.getElementById('spiral-logo').style.display = 'none';
             
-            const pet = document.getElementById('sad-clown');
-            pet.style.display = 'block'; // Mostra como bloco para aceitar animação!
+            // Exibe o container do Modelo 3D
+            document.getElementById('pet-container').style.display = 'block';
 
-            // COMPORTAMENTO INTERATIVO DO PET:
-            pet.addEventListener('mouseenter', () => {
-                const randomRotate = (Math.random() * 24) - 12; 
-                pet.style.transform = `scale(1.1) translateY(-15px) rotate(${randomRotate}deg)`;
-            });
-
-            pet.addEventListener('mouseleave', () => {
-                pet.style.transform = 'scale(1) translateY(0) rotate(0deg)';
-            });
-            
-            // CORREÇÃO: Altera os títulos usando o número real dinâmico dos dias atuais!
             document.getElementById('main-title').textContent = `MODO CRISE: ${globalDays}+ DIAS`;
             document.getElementById('main-subtitle').innerHTML = `Mascote do sistema ativado.<br>Chegamos a marca de ${globalDays} dias e o choro é livre.`;
             document.getElementById('counter-desc').textContent = "Tempo oficial de negação crônica:";
-            document.getElementById('bottom-phrase').textContent = "⚠️ Alerta: O pet sabe de tudo o que você faz no Instagram.";
             
-            // Força atualização imediata da frase com os dias certos
+            document.getElementById('bottom-phrase').textContent = "⚠️ Você pode clicar e girar o mascote para ver todos os ângulos da depressão.";
+            
             const specialMessages = [
                 `Atenção: ${globalDays} dias fingindo costume com maestria.`,
-                `O contador marca ${globalDays} dias, mas o aluguel mental continua grátis.`,
-                "O pet do sistema detectou recaídas emocionais recentes."
+                `O contador marca ${globalDays} dias, mas o aluguel mental continua grátis.`
             ];
-            const randomIndex = Math.floor(Math.random() * specialMessages.length);
-            document.getElementById('dynamic-message').textContent = specialMessages[randomIndex];
+            document.getElementById('dynamic-message').textContent = specialMessages[0];
         }
 
         updateTimer();
