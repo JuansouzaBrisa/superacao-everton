@@ -208,6 +208,14 @@
                 disable-zoom
                 style="width: 100%; height: 100%; background-color: transparent; outline: none;">
             </model-viewer>
+
+            <!-- Botão para disparar as animações -->
+            <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
+                <button class="btn" onclick="trocarAnimacao('Crying.glb')">Chorar</button>
+                <button class="btn" onclick="trocarAnimacao('Capoeira.glb')">Capoeira</button>
+                <button class="btn" onclick="trocarAnimacao('Sad Idle.glb')">Parar</button>
+            </div>
+
         </div>
 
         <h1 id="main-title">Everton Luidy</h1>
@@ -351,33 +359,16 @@
         setInterval(updateTimer, 1000);
     </script>
     <script>
-    // Seleciona o mascote pelo ID que já existe no seu HTML
-    const mascote = document.getElementById('mascote-3d');
-    let emCrise = false;
-
-    // Lógica do Clique Simples (Choro)
-    mascote.addEventListener('mousedown', () => {
-        if (emCrise) return;
-        emCrise = true;
-        mascote.src = 'Crying.glb'; // Troca para a animação de choro
+    function trocarAnimacao(nomeArquivo) {
+        const mascote = document.getElementById('mascote-3d');
         
-        setTimeout(() => {
-            mascote.src = 'Sad Idle.glb'; // Volta para a animação base (ex-Sad Idle.glb)
-            emCrise = false;
-        }, 4000);
-    });
-
-    // Lógica do Duplo Clique (Capoeira)
-    mascote.addEventListener('dblclick', () => {
-        if (emCrise) return;
-        emCrise = true;
-        mascote.src = 'Capoeira.glb'; // Troca para a animação de capoeira
+        // Aplica a nova fonte
+        mascote.src = nomeArquivo;
         
-        setTimeout(() => {
-            mascote.src = 'Sad Idle.glb'; // Volta para a animação base
-            emCrise = false;
-        }, 5000);
-    });
-</script>
+        // Força o model-viewer a recarregar o modelo caso ele demore
+        mascote.activate(); 
+    }
+
+    </script>
 </body>
 </html>
