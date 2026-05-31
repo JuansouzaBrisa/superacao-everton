@@ -20,8 +20,8 @@ async function lerGLB(nome) {
     return await io.readBinary(new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength));
 }
 
-console.log('Lendo Sad-Idle.glb...');
-const docIdle = await lerGLB('Sad-Idle.glb');
+console.log('Lendo SadI-dle.glb...');
+const docIdle = await lerGLB('SadI-dle.glb');
 
 console.log('Lendo Crying.glb...');
 const docCrying = await lerGLB('Crying.glb');
