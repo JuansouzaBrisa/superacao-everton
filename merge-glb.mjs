@@ -1,67 +1,545 @@
-import { NodeIO } from '@gltf-transform/core';
-import { ALL_EXTENSIONS } from '@gltf-transform/extensions';
-import { prune, dedup, mergeDocuments } from '@gltf-transform/functions';
-import { resolve, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { readFileSync, writeFileSync } from 'fs';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const io = new NodeIO().registerExtensions(ALL_EXTENSIONS);
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio de Superação - Everton Luidy</title>
 
-async function lerGLB(nome) {
-    const buf = readFileSync(resolve(__dirname, nome));
-    return await io.readBinary(new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength));
-}
+    <!-- Biblioteca Oficial do Google para ler o arquivo .glb em 3D -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
-console.log('Lendo arquivos...');
-const docBase     = await lerGLB('SadI-dle.glb');
-const docCrying   = await lerGLB('Crying.glb');
-const docCapoeira = await lerGLB('Capoeira.glb');
+    <!-- Pré-carrega o modelo único assim que o HTML é parseado -->
+    <link rel="preload" href="mascote.glb" as="fetch" crossorigin="anonymous">
 
-// Renomeia animações
-for (const a of docBase.getRoot().listAnimations())     a.setName('Idle');
-for (const a of docCrying.getRoot().listAnimations())   a.setName('Crying');
-for (const a of docCapoeira.getRoot().listAnimations()) a.setName('Capoeira');
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-// Remove TUDO dos documentos secundários exceto as animações
-// Isso evita duplicar malha/texturas no merge
-function limparMantendoAnimacoes(doc) {
-    const root = doc.getRoot();
-    // Remove meshes, materials, textures, skins — mantém só animações e accessors
-    for (const mesh of root.listMeshes())     mesh.dispose();
-    for (const mat of root.listMaterials())   mat.dispose();
-    for (const tex of root.listTextures())    tex.dispose();
-    for (const skin of root.listSkins())      skin.dispose();
-    for (const cam of root.listCameras())     cam.dispose();
-    // Mantém nodes e animações intactos
-}
+        body {
+            background-color: #0d0d0d;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
 
-console.log('Limpando documentos secundários...');
-limparMantendoAnimacoes(docCrying);
-limparMantendoAnimacoes(docCapoeira);
+        .container {
+            background-color: #141414;
+            padding: 40px 30px;
+            border-radius: 20px;
+            border: 1px solid #0077b6;
+            box-shadow: 0 0 30px rgba(0, 119, 182, 0.3);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 10;
+        }
 
-console.log('Mesclando...');
-mergeDocuments(docBase, docCrying);
-mergeDocuments(docBase, docCapoeira);
+        .spiral-icon {
+            font-size: 3.5rem;
+            color: #0096c7;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: spin 8s linear infinite;
+        }
 
-// Consolida buffers em 1
-const root = docBase.getRoot();
-const buffers = root.listBuffers();
-console.log('Buffers antes:', buffers.length);
-if (buffers.length > 1) {
-    const principal = buffers[0];
-    for (const acc of root.listAccessors()) acc.setBuffer(principal);
-    for (let i = 1; i < buffers.length; i++) buffers[i].dispose();
-}
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
 
-await docBase.transform(dedup(), prune());
+        h1 {
+            color: #00b4d8;
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
 
-console.log('Buffers finais:', root.listBuffers().length);
-console.log('Animações:');
-root.listAnimations().forEach(a => console.log(' -', a.getName()));
-console.log('Meshes:', root.listMeshes().length);
-console.log('Texturas:', root.listTextures().length);
+        .subtitle {
+            color: #90e0ef;
+            font-size: 1rem;
+            font-style: italic;
+            margin-bottom: 25px;
+        }
 
-const buffer = await io.writeBinary(docBase);
-writeFileSync(resolve(__dirname, 'mascote.glb'), Buffer.from(buffer));
-console.log('✅ mascote.glb salvo! Tamanho:', (buffer.byteLength / 1024 / 1024).toFixed(2), 'MB');
+        .meta-btn {
+            background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
+            margin-bottom: 25px;
+            transition: all 0.3s;
+            animation: pulseBlue 2s infinite;
+        }
+        .meta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px rgba(0, 180, 216, 0.7);
+        }
+
+        @keyframes pulseBlue {
+            0%   { box-shadow: 0 0 0 0   rgba(0, 180, 216, 0.6); }
+            70%  { box-shadow: 0 0 0 15px rgba(0, 180, 216, 0); }
+            100% { box-shadow: 0 0 0 0   rgba(0, 180, 216, 0); }
+        }
+
+        .counter-title {
+            color: #a2a2a2;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .timer-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .timer-box {
+            background-color: #1a1a1a;
+            padding: 20px 10px;
+            border-radius: 12px;
+            border: 1px solid #262626;
+        }
+
+        .time-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00b4d8;
+            display: block;
+        }
+
+        .time-label {
+            font-size: 0.7rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        .message-area {
+            min-height: 55px;
+            color: #caf0f8;
+            font-size: 0.95rem;
+            padding: 15px;
+            border-left: 4px solid #00b4d8;
+            background-color: #1a1a1a;
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .highlight-phrase {
+            color: #00b4d8;
+            font-weight: bold;
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+        }
+
+        .footer {
+            font-size: 0.8rem;
+            color: #444;
+        }
+
+        /* --- MASCOTE 3D --- */
+        #pet-container {
+            display: none;
+            margin: 0 auto 20px auto;
+            width: 100%;
+        }
+
+        #mascote-3d {
+            width: 100%;
+            height: 380px;
+            background-color: transparent;
+            outline: none;
+            overflow: hidden;
+            border-radius: 12px;
+            /* Oculto via visibility para o modelo carregar em background */
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        #mascote-3d.pronto {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Tela de loading enquanto o .glb carrega */
+        #mascote-3d::part(default-progress-bar) {
+            background-color: #00b4d8;
+        }
+
+        .mascote-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 380px;
+            gap: 12px;
+            color: #90e0ef;
+            font-size: 0.85rem;
+        }
+
+        .loading-spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid #1a1a1a;
+            border-top-color: #00b4d8;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .animation-btns {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .anim-btn {
+            padding: 8px 16px;
+            background: #1a1a1a;
+            border: 1px solid #00b4d8;
+            color: #00b4d8;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.3s, color 0.3s;
+        }
+        .anim-btn:hover,
+        .anim-btn.active {
+            background: #00b4d8;
+            color: #141414;
+        }
+
+        /* --- MODAL DO QUIZ --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: #141414;
+            padding: 35px;
+            border-radius: 15px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid #0077b6;
+            box-shadow: 0 0 25px rgba(0, 119, 182, 0.4);
+        }
+        .modal h3 {
+            margin-bottom: 25px;
+            color: #caf0f8;
+            font-size: 1.25rem;
+            line-height: 1.4;
+        }
+
+        .quiz-btns {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .quiz-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+        .btn-sim { background: #0077b6; color: white; }
+        .btn-sim:hover { background: #0096c7; }
+        .btn-nao { background: #333; color: #a2a2a2; }
+        .btn-nao:hover { background: #444; color: #fff; }
+
+        /* --- MODO CRISE --- */
+        .container.alert-mode {
+            border-color: #d90429;
+            box-shadow: 0 0 35px rgba(217, 4, 41, 0.4);
+        }
+        .container.alert-mode h1          { color: #d90429; }
+        .container.alert-mode .time-number { color: #d90429; }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="main-container">
+
+        <!-- Botão oculto até atingir TARGET_DAYS -->
+        <button class="meta-btn" id="trigger-btn" style="display: none;" onclick="openQuiz()">
+            🎉 EXPANDIR RELATÓRIO DE METAS 🎉
+        </button>
+
+        <div class="spiral-icon" id="spiral-logo">🌀</div>
+
+        <!-- Mascote 3D — carrega em background desde o início, aparece após o quiz -->
+        <div id="pet-container">
+
+            <!-- Overlay de loading: visível até o modelo estar pronto -->
+            <div class="mascote-loading" id="mascote-loading">
+                <div class="loading-spinner"></div>
+                <span>Carregando mascote da depressão...</span>
+            </div>
+
+            <model-viewer
+                id="mascote-3d"
+                src="mascote.glb"
+                animation-name="Idle"
+                alt="Everton Mascote 3D"
+                camera-controls
+                disable-zoom
+                autoplay
+                auto-rotate
+                auto-rotate-delay="3000"
+                rotation-per-second="30deg"
+                camera-orbit="0deg 90deg 120%"
+                field-of-view="35deg"
+                min-camera-orbit="auto auto 80%"
+                max-camera-orbit="auto auto 180%"
+                camera-target="0m 1.0m 0m"
+                bounds="tight">
+            </model-viewer>
+
+            <div class="animation-btns">
+                <button class="anim-btn" id="btn-chorar"   onclick="trocarAnimacao('Crying',   this)">Chorar</button>
+                <button class="anim-btn" id="btn-capoeira" onclick="trocarAnimacao('Capoeira', this)">Capoeira</button>
+                <button class="anim-btn active" id="btn-parar" onclick="trocarAnimacao('Idle',    this)">Parar</button>
+            </div>
+        </div>
+
+        <h1 id="main-title">Everton Luidy</h1>
+        <div class="subtitle" id="main-subtitle">"100% Superado" da Ana Flavia</div>
+
+        <div class="counter-title" id="counter-desc">Contagem regressiva da liberdade:</div>
+
+        <div class="timer-grid">
+            <div class="timer-box">
+                <span class="time-number" id="days">00</span>
+                <span class="time-label">Dias</span>
+            </div>
+            <div class="timer-box">
+                <span class="time-number" id="hours">00</span>
+                <span class="time-label">Horas</span>
+            </div>
+            <div class="timer-box">
+                <span class="time-number" id="minutes">00</span>
+                <span class="time-label">Min</span>
+            </div>
+            <div class="timer-box">
+                <span class="time-number" id="seconds">00</span>
+                <span class="time-label">Seg</span>
+            </div>
+        </div>
+
+        <div class="message-area" id="dynamic-message">
+            Analisando bancos de dados de arquivos ocultos...
+        </div>
+
+        <div class="highlight-phrase" id="bottom-phrase">
+            Já apagou as fotos (estão na pasta oculta).
+        </div>
+
+        <div class="footer">
+            O fim do ciclo: 08/10/2024 às 18:00
+        </div>
+    </div>
+
+    <!-- Modal do Quiz -->
+    <div class="modal-overlay" id="quiz-modal">
+        <div class="modal">
+            <h3>Everton, de forma honesta...<br>Você realmente superou a Ana Flávia?</h3>
+            <div class="quiz-btns">
+                <button class="quiz-btn btn-sim" onclick="quizAnswer(true)">Sim, totalmente!</button>
+                <button class="quiz-btn btn-nao" onclick="quizAnswer(false)">Não, confesso...</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ─── Configurações ─────────────────────────────────────────────────────────
+        const startDate  = new Date('2024-10-08T18:00:00');
+        const TARGET_DAYS = 590;
+
+        const messages = [
+            "Tempo exato de superação analítica em andamento.",
+            "Varredura concluída: 0 indícios reais de esquecimento.",
+            "Diz que superou, mas ouve a playlist triste de madrugada.",
+            "Ele jura que nem lembra mais dela...",
+            "A Ana Flavia segue vivendo no aluguel grátis na mente dele."
+        ];
+
+        let forceMode  = false;
+        let globalDays = 0;
+
+        // ─── Timer ─────────────────────────────────────────────────────────────────
+        function updateTimer() {
+            const now        = new Date();
+            const difference = now - startDate;
+
+            globalDays       = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours      = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes    = Math.floor((difference % (1000 * 60 * 60))      / (1000 * 60));
+            const seconds    = Math.floor((difference % (1000 * 60))           / 1000);
+
+            document.getElementById('days').textContent    = String(globalDays).padStart(2, '0');
+            document.getElementById('hours').textContent   = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+
+            // Exibe o botão quando atingir a meta
+            if (globalDays >= TARGET_DAYS && !forceMode) {
+                document.getElementById('trigger-btn').style.display = 'inline-block';
+            }
+
+            // Troca mensagem a cada 10 segundos
+            if (seconds % 10 === 0) {
+                const specialMessages = [
+                    `Atenção: ${globalDays} dias fingindo costume com maestria.`,
+                    `O contador marca ${globalDays} dias, mas o aluguel mental continua grátis.`,
+                    "O pet do sistema detectou recaídas emocionais recentes.",
+                    `Parabéns pelos mais de ${globalDays} dias de fingimento profissional!`,
+                    `Fase de ${globalDays} dias: Nível de negação continua no máximo.`
+                ];
+                const pool        = (globalDays >= TARGET_DAYS || forceMode) ? specialMessages : messages;
+                const randomIndex = Math.floor(Math.random() * pool.length);
+                document.getElementById('dynamic-message').textContent = pool[randomIndex];
+            }
+        }
+
+        // ─── Quiz ──────────────────────────────────────────────────────────────────
+        function openQuiz() {
+            document.getElementById('quiz-modal').classList.add('active');
+        }
+
+        function quizAnswer(answeredYes) {
+            document.getElementById('quiz-modal').classList.remove('active');
+
+            if (answeredYes) {
+                alert("❌ SISTEMA DE VERIFICAÇÃO: Mentira detectada. Quem supera não clica em botões interativos para provar nada. Iniciando penalidade...");
+            } else {
+                alert(`🩹 Humildade computada com sucesso! Mas saiba que ${globalDays} dias é só o começo do tratamento.`);
+            }
+
+            transformInterface();
+        }
+
+        // ─── Pré-carrega o modelo assim que a página abre ─────────────────────────
+        // O model-viewer está no DOM desde o início (só invisível via CSS),
+        // então o browser começa o download imediatamente.
+        (function iniciarPreload() {
+            const mascote = document.getElementById('mascote-3d');
+            mascote.addEventListener('load', function () {
+                mascoteCarregado = true;
+                mascote.play({ repetitions: Infinity });
+                // Se o quiz já foi respondido, mostra na hora
+                if (forceMode) mostrarMascote();
+            });
+        })();
+
+        let mascoteCarregado = false;
+
+        function mostrarMascote() {
+            const mascote  = document.getElementById('mascote-3d');
+            const loading  = document.getElementById('mascote-loading');
+            loading.style.display = 'none';
+            mascote.classList.add('pronto');
+        }
+
+        // ─── Transformação de Interface ────────────────────────────────────────────
+        function transformInterface() {
+            forceMode = true;
+
+            document.getElementById('main-container').classList.add('alert-mode');
+            document.getElementById('trigger-btn').style.display  = 'none';
+            document.getElementById('spiral-logo').style.display  = 'none';
+
+            // Exibe o container (spinner já visível enquanto carrega)
+            document.getElementById('pet-container').style.display = 'block';
+
+            // Se o modelo já terminou de carregar em background, mostra imediatamente
+            if (mascoteCarregado) mostrarMascote();
+
+            document.getElementById('main-title').textContent     = `MODO CRISE: ${globalDays}+ DIAS`;
+            document.getElementById('main-subtitle').innerHTML    = `Mascote do sistema ativado.<br>Chegamos à marca de ${globalDays} dias e o choro é livre.`;
+            document.getElementById('counter-desc').textContent   = "Tempo oficial de negação crônica:";
+            document.getElementById('bottom-phrase').textContent  = "⚠️ Você pode clicar e girar o mascote para ver todos os ângulos da depressão.";
+            document.getElementById('dynamic-message').textContent = `Atenção: ${globalDays} dias fingindo costume com maestria.`;
+        }
+
+        // ─── Troca de Animação do Mascote ──────────────────────────────────────────
+        // Agora usa animationName — modelo único, troca instantânea sem novo download
+        function trocarAnimacao(nomeAnimacao, btnClicado) {
+            const mascote = document.getElementById('mascote-3d');
+
+            mascote.animationName = nomeAnimacao;
+            mascote.play({ repetitions: Infinity });
+
+            // Feedback visual: marca o botão ativo
+            document.querySelectorAll('.anim-btn').forEach(btn => btn.classList.remove('active'));
+            if (btnClicado) btnClicado.classList.add('active');
+        }
+
+        // ─── Duplo clique no mascote → Capoeira ────────────────────────────────────
+        // FIX: movido para cá (executado apenas uma vez) e com guarda para elemento existente.
+        document.addEventListener('DOMContentLoaded', function () {
+            const mascote = document.getElementById('mascote-3d');
+            if (mascote) {
+                mascote.addEventListener('dblclick', function () {
+                    trocarAnimacao('Capoeira', document.getElementById('btn-capoeira'));
+                });
+            }
+        });
+
+        // ─── Inicialização ─────────────────────────────────────────────────────────
+        updateTimer();
+        setInterval(updateTimer, 1000);
+
+        // Pre-cache dos .glb em background
+        // Faz o download silencioso de todos os modelos assim que a pagina carrega.
+        // Quando o usuario abrir o mascote ou trocar animacao, o arquivo ja esta
+        // no cache do navegador - carregamento instantaneo.
+        // Pre-cache do modelo único
+        window.addEventListener('load', function () {
+            setTimeout(function () {
+                fetch('mascote.glb', { cache: 'force-cache' }).catch(function () {});
+            }, 1500);
+        });
+    </script>
+
+</body>
+</html>
