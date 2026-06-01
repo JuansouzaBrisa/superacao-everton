@@ -170,9 +170,16 @@
             height: 380px;
             background-color: transparent;
             outline: none;
-            /* Garante que o canvas interno não seja cortado */
             overflow: hidden;
             border-radius: 12px;
+            /* Oculto via visibility para o modelo carregar em background */
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        #mascote-3d.pronto {
+            visibility: visible;
+            opacity: 1;
         }
 
         /* Tela de loading enquanto o .glb carrega */
@@ -300,7 +307,7 @@
 
         <div class="spiral-icon" id="spiral-logo">🌀</div>
 
-        <!-- Mascote 3D — exibido após o quiz -->
+        <!-- Mascote 3D — carrega em background desde o início, aparece após o quiz -->
         <div id="pet-container">
 
             <!-- Overlay de loading: visível até o modelo estar pronto -->
@@ -309,14 +316,6 @@
                 <span>Carregando mascote da depressão...</span>
             </div>
 
-            <!--
-                CORREÇÕES DE ENQUADRAMENTO:
-                - camera-orbit: ângulo horizontal 0°, vertical 75° (evita cortar cabeça/pés), zoom 105%
-                - field-of-view: 30deg — quanto menor, mais "zoom" sem distorcer
-                - min-camera-orbit / max-camera-orbit: limitam o quanto o usuário pode afastar
-                - camera-target: aponta a câmera para o centro vertical do modelo (50% da altura)
-                - bounds="tight": usa a bounding box real do modelo, sem padding extra
-            -->
             <model-viewer
                 id="mascote-3d"
                 src="mascote.glb"
@@ -333,8 +332,7 @@
                 min-camera-orbit="auto auto 100%"
                 max-camera-orbit="auto auto 160%"
                 camera-target="0m 0m 0m"
-                bounds="tight"
-                style="display: none;">
+                bounds="tight">
             </model-viewer>
 
             <div class="animation-btns">
@@ -460,6 +458,28 @@
             transformInterface();
         }
 
+        // ─── Pré-carrega o modelo assim que a página abre ─────────────────────────
+        // O model-viewer está no DOM desde o início (só invisível via CSS),
+        // então o browser começa o download imediatamente.
+        (function iniciarPreload() {
+            const mascote = document.getElementById('mascote-3d');
+            mascote.addEventListener('load', function () {
+                mascoteCarregado = true;
+                mascote.play({ repetitions: Infinity });
+                // Se o quiz já foi respondido, mostra na hora
+                if (forceMode) mostrarMascote();
+            });
+        })();
+
+        let mascoteCarregado = false;
+
+        function mostrarMascote() {
+            const mascote  = document.getElementById('mascote-3d');
+            const loading  = document.getElementById('mascote-loading');
+            loading.style.display = 'none';
+            mascote.classList.add('pronto');
+        }
+
         // ─── Transformação de Interface ────────────────────────────────────────────
         function transformInterface() {
             forceMode = true;
@@ -468,17 +488,11 @@
             document.getElementById('trigger-btn').style.display  = 'none';
             document.getElementById('spiral-logo').style.display  = 'none';
 
-            // Exibe o container com o loading spinner visível
+            // Exibe o container (spinner já visível enquanto carrega)
             document.getElementById('pet-container').style.display = 'block';
 
-            // Quando o modelo terminar de carregar, esconde o spinner e mostra o viewer
-            const mascote = document.getElementById('mascote-3d');
-            mascote.addEventListener('load', function onFirstLoad() {
-                document.getElementById('mascote-loading').style.display = 'none';
-                mascote.style.display = 'block';
-                mascote.play({ repetitions: Infinity });
-                mascote.removeEventListener('load', onFirstLoad);
-            });
+            // Se o modelo já terminou de carregar em background, mostra imediatamente
+            if (mascoteCarregado) mostrarMascote();
 
             document.getElementById('main-title').textContent     = `MODO CRISE: ${globalDays}+ DIAS`;
             document.getElementById('main-subtitle').innerHTML    = `Mascote do sistema ativado.<br>Chegamos à marca de ${globalDays} dias e o choro é livre.`;
