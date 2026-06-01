@@ -336,9 +336,7 @@
             </model-viewer>
 
             <div class="animation-btns">
-                <button class="anim-btn" id="btn-chorar"   onclick="trocarAnimacao('Crying',   this)">Chorar</button>
-                <button class="anim-btn" id="btn-capoeira" onclick="trocarAnimacao('Capoeira', this)">Capoeira</button>
-                <button class="anim-btn active" id="btn-parar" onclick="trocarAnimacao('Idle',    this)">Parar</button>
+                <button class="anim-btn active" id="btn-parar" onclick="trocarAnimacao('Idle', this)">▶ Animação</button>
             </div>
         </div>
 
@@ -530,16 +528,7 @@
             if (btnClicado) btnClicado.classList.add('active');
         }
 
-        // ─── Duplo clique no mascote → Capoeira ────────────────────────────────────
-        // FIX: movido para cá (executado apenas uma vez) e com guarda para elemento existente.
-        document.addEventListener('DOMContentLoaded', function () {
-            const mascote = document.getElementById('mascote-3d');
-            if (mascote) {
-                mascote.addEventListener('dblclick', function () {
-                    trocarAnimacao('Capoeira', document.getElementById('btn-capoeira'));
-                });
-            }
-        });
+
 
         // ─── Inicialização ─────────────────────────────────────────────────────────
         updateTimer();
