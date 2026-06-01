@@ -327,11 +327,11 @@
                 auto-rotate
                 auto-rotate-delay="3000"
                 rotation-per-second="30deg"
-                camera-orbit="0deg 90deg 200%"
-                field-of-view="60deg"
-                min-camera-orbit="auto auto 150%"
-                max-camera-orbit="auto auto 250%"
-                camera-target="0m 1.2m 0m"
+                camera-orbit="0deg 90deg 120%"
+                field-of-view="35deg"
+                min-camera-orbit="auto auto 80%"
+                max-camera-orbit="auto auto 180%"
+                camera-target="0m 1.0m 0m"
                 bounds="tight">
             </model-viewer>
 
@@ -502,14 +502,30 @@
         }
 
         // ─── Troca de Animação do Mascote ──────────────────────────────────────────
-        // Agora usa animationName — modelo único, troca instantânea sem novo download
         function trocarAnimacao(nomeAnimacao, btnClicado) {
             const mascote = document.getElementById('mascote-3d');
 
-            mascote.animationName = nomeAnimacao;
-            mascote.play({ repetitions: Infinity });
+            // Para a animação atual antes de trocar
+            mascote.pause();
 
-            // Feedback visual: marca o botão ativo
+            // Define a nova animação
+            mascote.animationName = nomeAnimacao;
+
+            // Aguarda um frame para o model-viewer reconhecer a mudança
+            requestAnimationFrame(function () {
+                mascote.play({ repetitions: Infinity });
+            });
+
+            // Ajusta câmera conforme a animação (Capoeira é deitado, precisa de ângulo diferente)
+            if (nomeAnimacao === 'Capoeira') {
+                mascote.cameraOrbit  = '0deg 75deg 120%';
+                mascote.cameraTarget = '0m 0.5m 0m';
+            } else {
+                mascote.cameraOrbit  = '0deg 90deg 120%';
+                mascote.cameraTarget = '0m 1.0m 0m';
+            }
+
+            // Feedback visual
             document.querySelectorAll('.anim-btn').forEach(btn => btn.classList.remove('active'));
             if (btnClicado) btnClicado.classList.add('active');
         }
