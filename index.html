@@ -217,10 +217,12 @@
         }
         .quiz-launch:hover { transform: translateY(-2px); filter: brightness(1.06); }
         .footer { margin: 27px 0 0; color: #777184; font-size: .76rem; }
-        .pet-container { display: none; margin: 24px auto 8px; width: 100%; }
-        model-viewer { width: 100%; height: 320px; visibility: hidden; opacity: 0; transition: opacity .4s; }
+        .pet-container { display: none; margin: 24px auto 8px; width: 100%; padding: 15px 10px; border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(ellipse at 50% 70%, rgba(183,154,255,.11), transparent 65%), rgba(10,9,16,.35); }
+        .mascot-fallback { display: none; width: min(100%, 270px); height: min(430px, 58vh); margin: 4px auto 12px; object-fit: contain; filter: drop-shadow(0 14px 28px rgba(0,0,0,.35)); }
+        model-viewer { width: 100%; height: min(430px, 62vh); visibility: hidden; opacity: 0; transition: opacity .4s; }
         model-viewer.ready { visibility: visible; opacity: 1; }
-        .pet-loading { display: grid; align-content: center; justify-items: center; gap: 8px; min-height: 220px; color: var(--muted); font-size: .85rem; }
+        model-viewer::part(default-progress-bar) { height: 3px; background: linear-gradient(90deg, var(--purple), var(--pink)); }
+        .pet-loading { display: grid; align-content: center; justify-items: center; gap: 8px; min-height: 100px; color: var(--muted); font-size: .85rem; }
         .spinner { width: 28px; height: 28px; margin-bottom: 12px; border: 2px solid #393246; border-top-color: var(--pink); border-radius: 50%; animation: spin .8s linear infinite; }
         .retry-mascot { display: none; margin: 0 auto 12px; padding: 9px 14px; color: var(--text); background: #302a3d; border: 1px solid var(--line); border-radius: 9px; font: 600 .82rem 'DM Sans', sans-serif; cursor: pointer; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -283,7 +285,8 @@
             <div class="pet-container" id="pet-container">
                 <div class="pet-loading" id="pet-loading"><div class="spinner" id="mascot-spinner"></div><span id="mascot-status">Preparando o mascote...</span></div>
                 <button class="retry-mascot" id="retry-mascot" type="button">Tentar carregar o mascote novamente</button>
-                <model-viewer id="mascote-3d" alt="Mascote 3D do Everton" camera-controls disable-zoom autoplay auto-rotate auto-rotate-delay="3000" rotation-per-second="25deg" camera-orbit="0deg 90deg 120%" field-of-view="35deg" camera-target="0m 1.0m 0m" bounds="tight"></model-viewer>
+                <img class="mascot-fallback" id="mascot-fallback" src="everton-3d.png" alt="Retrato do mascote enquanto a versão 3D carrega" loading="lazy">
+                <model-viewer id="mascote-3d" alt="Mascote 3D do Everton" camera-controls disable-zoom autoplay auto-rotate auto-rotate-delay="3000" rotation-per-second="25deg" camera-orbit="0deg 75deg 50%" field-of-view="30deg" camera-target="auto auto auto"></model-viewer>
             </div>
             <button class="quiz-launch" id="trigger-btn" type="button">Abrir auditoria emocional</button>
             <p class="milestone">Data oficial do encerramento: <strong id="start-date-label">8 de outubro de 2024, às 18h</strong><br>Relógio configurado no fuso de Brasília · UTC−3</p>
@@ -450,8 +453,9 @@
             const spinner = document.getElementById('mascot-spinner');
             const retry = document.getElementById('retry-mascot');
             retry.style.display = 'none';
+            document.getElementById('mascot-fallback').style.display = 'block';
             spinner.style.display = 'block';
-            status.textContent = 'Buscando o mascote 3D (arquivo de 29 MB)...';
+            status.textContent = 'O retrato já chegou; buscando a versão animada em 3D...';
             try {
                 await import('https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js');
                 viewer.removeAttribute('src');
@@ -475,6 +479,7 @@
             mascotLoaded = true;
             clearTimeout(mascotTimeout);
             document.getElementById('pet-loading').style.display = 'none';
+            document.getElementById('mascot-fallback').style.display = 'none';
             document.getElementById('retry-mascot').style.display = 'none';
             document.getElementById('mascote-3d').classList.add('ready');
         }
@@ -484,6 +489,12 @@
             mascotLoaded = true;
             event.currentTarget.play({ repetitions: Infinity });
             if (document.getElementById('pet-container').style.display === 'block') showMascot();
+        });
+        document.getElementById('mascote-3d').addEventListener('progress', event => {
+            const progress = event.detail?.totalProgress ?? 0;
+            if (progress > 0 && progress < 1) {
+                document.getElementById('mascot-status').textContent = `Carregando o mascote 3D: ${Math.round(progress * 100)}%`;
+            }
         });
         document.getElementById('mascote-3d').addEventListener('error', () => {
             clearTimeout(mascotTimeout);
