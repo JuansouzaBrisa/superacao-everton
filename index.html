@@ -1,550 +1,508 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desafio de Superação - Everton Luidy</title>
-
-    <!-- Biblioteca Oficial do Google para ler o arquivo .glb em 3D -->
-    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
-
-    <!-- Pré-carrega o modelo único assim que o HTML é parseado -->
-    <link rel="preload" href="mascote.glb" as="fetch" crossorigin="anonymous">
-
+    <meta name="theme-color" content="#100e19">
+    <meta name="description" content="Um relatório nada oficial sobre dois anos de superação do Everton.">
+    <title>Projeto Superação — Everton</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            color-scheme: dark;
+            --bg: #100e19;
+            --panel: rgba(27, 24, 39, .88);
+            --panel-light: #211e2e;
+            --text: #f7f3ff;
+            --muted: #aaa4b8;
+            --purple: #b79aff;
+            --pink: #ff9ecb;
+            --gold: #ffd88a;
+            --line: rgba(206, 185, 255, .16);
         }
-
+        * { box-sizing: border-box; }
         body {
-            background-color: #0d0d0d;
+            margin: 0;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            padding: 34px 18px;
+            display: grid;
+            place-items: center;
+            color: var(--text);
+            background:
+                radial-gradient(ellipse at 50% -15%, rgba(138, 91, 220, .25), transparent 52%),
+                radial-gradient(ellipse at 100% 90%, rgba(255, 126, 180, .09), transparent 40%),
+                var(--bg);
+            font-family: 'DM Sans', sans-serif;
             overflow-x: hidden;
         }
-
-        .container {
-            background-color: #141414;
-            padding: 40px 30px;
-            border-radius: 20px;
-            border: 1px solid #0077b6;
-            box-shadow: 0 0 30px rgba(0, 119, 182, 0.3);
-            text-align: center;
-            max-width: 600px;
-            width: 100%;
-            transition: all 0.5s ease;
+        body::before, body::after {
+            position: fixed;
+            content: '✦';
+            color: rgba(255, 216, 138, .45);
+            font-size: 18px;
+            pointer-events: none;
+            animation: twinkle 3.6s ease-in-out infinite;
+        }
+        body::before { top: 12%; left: 10%; }
+        body::after { right: 11%; bottom: 13%; animation-delay: 1.5s; font-size: 24px; }
+        @keyframes twinkle { 50% { opacity: .28; transform: scale(.76) rotate(25deg); } }
+        .page { width: min(100%, 760px); }
+        .card {
             position: relative;
-            z-index: 10;
+            overflow: hidden;
+            padding: clamp(25px, 6vw, 52px);
+            text-align: center;
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            background: linear-gradient(145deg, rgba(31, 27, 45, .97), rgba(20, 18, 29, .97));
+            box-shadow: 0 28px 90px rgba(0, 0, 0, .42), 0 0 55px rgba(166, 128, 255, .08);
         }
-
-        .spiral-icon {
-            font-size: 3.5rem;
-            color: #0096c7;
-            margin-bottom: 15px;
-            display: inline-block;
-            animation: spin 8s linear infinite;
+        .card::before {
+            position: absolute;
+            top: 0; left: 12%; right: 12%; height: 1px;
+            content: '';
+            background: linear-gradient(90deg, transparent, rgba(255, 216, 138, .75), transparent);
         }
-
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-
-        h1 {
-            color: #00b4d8;
-            font-size: 2.2rem;
-            letter-spacing: 2px;
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 13px;
+            color: #eadfff;
+            background: rgba(183, 154, 255, .1);
+            border: 1px solid rgba(183, 154, 255, .2);
+            border-radius: 999px;
+            font-size: .72rem;
+            font-weight: 700;
+            letter-spacing: .13em;
             text-transform: uppercase;
-            margin-bottom: 5px;
         }
-
+        .eyebrow .sparkle { color: var(--gold); }
+        h1 {
+            margin: 22px 0 8px;
+            font: 700 clamp(2.1rem, 7vw, 3.5rem)/1.06 'Space Grotesk', sans-serif;
+            letter-spacing: -.055em;
+        }
+        h1 span { color: var(--pink); }
         .subtitle {
-            color: #90e0ef;
-            font-size: 1rem;
-            font-style: italic;
-            margin-bottom: 25px;
+            margin: 0 auto;
+            max-width: 490px;
+            color: var(--muted);
+            font-size: clamp(.95rem, 2.5vw, 1.05rem);
+            line-height: 1.65;
         }
-
-        .meta-btn {
-            background: linear-gradient(135deg, #0077b6 0%, #00b4d8 100%);
-            color: white;
-            border: none;
-            padding: 12px 28px;
-            font-size: 0.95rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-            border-radius: 8px;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(0, 180, 216, 0.4);
-            margin-bottom: 25px;
-            transition: all 0.3s;
-            animation: pulseBlue 2s infinite;
+        .anniversary-note {
+            display: none;
+            margin: 24px auto 0;
+            padding: 14px 17px;
+            max-width: 540px;
+            color: #ffe6b2;
+            background: rgba(255, 216, 138, .08);
+            border: 1px solid rgba(255, 216, 138, .22);
+            border-radius: 14px;
+            line-height: 1.5;
         }
-        .meta-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 25px rgba(0, 180, 216, 0.7);
+        .anniversary-note.visible { display: block; }
+        .anniversary-note strong { color: var(--gold); }
+        .countdown-panel {
+            display: none;
+            margin: 22px auto 0;
+            padding: 18px 20px 17px;
+            max-width: 540px;
+            border: 1px solid rgba(255, 216, 138, .22);
+            border-radius: 18px;
+            background: linear-gradient(135deg, rgba(255, 216, 138, .09), rgba(255, 158, 203, .06));
         }
-
-        @keyframes pulseBlue {
-            0%   { box-shadow: 0 0 0 0   rgba(0, 180, 216, 0.6); }
-            70%  { box-shadow: 0 0 0 15px rgba(0, 180, 216, 0); }
-            100% { box-shadow: 0 0 0 0   rgba(0, 180, 216, 0); }
+        .countdown-panel.visible { display: block; }
+        .countdown-kicker {
+            margin: 0 0 7px;
+            color: var(--gold);
+            font-size: .7rem;
+            font-weight: 700;
+            letter-spacing: .14em;
+            text-transform: uppercase;
         }
-
-        .counter-title {
-            color: #a2a2a2;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
+        .countdown-value {
+            color: #fff2d1;
+            font: 700 clamp(2.5rem, 10vw, 4rem)/1.1 'Space Grotesk', sans-serif;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: .04em;
         }
-
+        .countdown-caption { margin: 7px 0 0; color: var(--muted); font-size: .78rem; }
+        .section-label {
+            margin: 34px 0 7px;
+            color: var(--muted);
+            font-size: .76rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+        .duration-words {
+            min-height: 38px;
+            margin: 0 auto 20px;
+            color: var(--text);
+            font: 600 clamp(1.2rem, 4.2vw, 1.8rem)/1.4 'Space Grotesk', sans-serif;
+            letter-spacing: -.025em;
+        }
         .timer-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .timer-box {
-            background-color: #1a1a1a;
-            padding: 20px 10px;
-            border-radius: 12px;
-            border: 1px solid #262626;
-        }
-
-        .time-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #00b4d8;
-            display: block;
-        }
-
-        .time-label {
-            font-size: 0.7rem;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 5px;
-        }
-
-        .message-area {
-            min-height: 55px;
-            color: #caf0f8;
-            font-size: 0.95rem;
-            padding: 15px;
-            border-left: 4px solid #00b4d8;
-            background-color: #1a1a1a;
-            border-radius: 0 8px 8px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-
-        .highlight-phrase {
-            color: #00b4d8;
-            font-weight: bold;
-            font-size: 1.05rem;
-            margin-bottom: 25px;
-        }
-
-        .footer {
-            font-size: 0.8rem;
-            color: #444;
-        }
-
-        /* --- MASCOTE 3D --- */
-        #pet-container {
-            display: none;
-            margin: 0 auto 20px auto;
-            width: 100%;
-        }
-
-        #mascote-3d {
-            width: 100%;
-            height: 380px;
-            background-color: transparent;
-            outline: none;
-            overflow: hidden;
-            border-radius: 12px;
-            /* Oculto via visibility para o modelo carregar em background */
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        #mascote-3d.pronto {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        /* Tela de loading enquanto o .glb carrega */
-        #mascote-3d::part(default-progress-bar) {
-            background-color: #00b4d8;
-        }
-
-        .mascote-loading {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 380px;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 12px;
-            color: #90e0ef;
-            font-size: 0.85rem;
         }
-
-        .loading-spinner {
-            width: 36px;
-            height: 36px;
-            border: 3px solid #1a1a1a;
-            border-top-color: #00b4d8;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        .timer-box {
+            min-width: 0;
+            padding: 18px 8px 15px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.018));
         }
-
-        .animation-btns {
-            margin-top: 10px;
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .time-number {
+            display: block;
+            color: var(--purple);
+            font: 700 clamp(1.7rem, 5.4vw, 2.65rem)/1 'Space Grotesk', sans-serif;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -.055em;
         }
-
-        .anim-btn {
-            padding: 8px 16px;
-            background: #1a1a1a;
-            border: 1px solid #00b4d8;
-            color: #00b4d8;
-            border-radius: 6px;
+        .time-label {
+            display: block;
+            margin-top: 9px;
+            color: var(--muted);
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+        .subclock {
+            margin: 14px 0 0;
+            color: #8e879d;
+            font-size: .82rem;
+            font-variant-numeric: tabular-nums;
+        }
+        .subclock strong { color: #d5c9ef; font-weight: 600; }
+        .message {
+            margin: 27px 0 0;
+            padding: 16px 18px;
+            color: #ded7eb;
+            background: rgba(183, 154, 255, .07);
+            border-left: 3px solid var(--purple);
+            border-radius: 4px 13px 13px 4px;
+            font-size: .93rem;
+            line-height: 1.6;
+        }
+        .message .sparkle { color: var(--gold); }
+        .anniversary .eyebrow { color: #ffe6b2; background: rgba(255,216,138,.08); border-color: rgba(255,216,138,.28); }
+        .anniversary h1 span, .anniversary .time-number { color: var(--gold); }
+        .anniversary .timer-box { border-color: rgba(255,216,138,.2); }
+        .milestone {
+            margin: 24px 0 0;
+            color: var(--muted);
+            font-size: .78rem;
+            line-height: 1.6;
+        }
+        .milestone strong { color: #e9dfff; font-weight: 600; }
+        .quiz-launch {
+            display: none;
+            margin: 24px 0 0;
+            padding: 12px 18px;
+            color: #181321;
+            background: linear-gradient(135deg, #ffcb91, #ff9ecb);
+            border: 0;
+            border-radius: 999px;
+            font: 700 .9rem 'DM Sans', sans-serif;
             cursor: pointer;
-            font-size: 0.8rem;
-            transition: background 0.3s, color 0.3s;
+            box-shadow: 0 7px 24px rgba(255, 158, 203, .16);
+            transition: transform .2s, filter .2s;
         }
-        .anim-btn:hover,
-        .anim-btn.active {
-            background: #00b4d8;
-            color: #141414;
-        }
-
-        /* --- MODAL DO QUIZ --- */
+        .quiz-launch:hover { transform: translateY(-2px); filter: brightness(1.06); }
+        .footer { margin: 27px 0 0; color: #777184; font-size: .76rem; }
+        .pet-container { display: none; margin: 24px auto 8px; width: 100%; }
+        model-viewer { width: 100%; height: 320px; visibility: hidden; opacity: 0; transition: opacity .4s; }
+        model-viewer.ready { visibility: visible; opacity: 1; }
+        .pet-loading { display: grid; align-content: center; justify-items: center; gap: 8px; min-height: 220px; color: var(--muted); font-size: .85rem; }
+        .spinner { width: 28px; height: 28px; margin-bottom: 12px; border: 2px solid #393246; border-top-color: var(--pink); border-radius: 50%; animation: spin .8s linear infinite; }
+        .retry-mascot { display: none; margin: 0 auto 12px; padding: 9px 14px; color: var(--text); background: #302a3d; border: 1px solid var(--line); border-radius: 9px; font: 600 .82rem 'DM Sans', sans-serif; cursor: pointer; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; padding: 18px;
+            background: rgba(8, 7, 12, .78); backdrop-filter: blur(8px);
+            opacity: 0; pointer-events: none; transition: opacity .25s;
         }
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal {
-            background: #141414;
-            padding: 35px;
-            border-radius: 15px;
-            max-width: 420px;
-            width: 90%;
-            text-align: center;
-            border: 1px solid #0077b6;
-            box-shadow: 0 0 25px rgba(0, 119, 182, 0.4);
+            width: min(100%, 430px); padding: 30px 25px; text-align: center;
+            background: #201c2c; border: 1px solid var(--line); border-radius: 22px;
+            box-shadow: 0 25px 80px rgba(0,0,0,.5); transform: translateY(8px); transition: transform .25s;
         }
-        .modal h3 {
-            margin-bottom: 25px;
-            color: #caf0f8;
-            font-size: 1.25rem;
-            line-height: 1.4;
+        .active .modal { transform: translateY(0); }
+        .modal h2 { margin: 0 0 23px; font: 600 1.25rem/1.5 'Space Grotesk', sans-serif; }
+        .quiz-buttons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .quiz-button { padding: 11px 16px; border: 1px solid var(--line); border-radius: 10px; color: var(--text); background: #302a3d; font: 600 .88rem 'DM Sans', sans-serif; cursor: pointer; }
+        .quiz-button.primary { color: #181321; border: 0; background: linear-gradient(135deg,#ffcb91,#ff9ecb); }
+        .crisis h1 span, .crisis .time-number { color: #ff8496; }
+        .crisis .eyebrow { color: #ffc5ce; background: rgba(255,132,150,.08); border-color: rgba(255,132,150,.2); }
+        .crisis .timer-box { border-color: rgba(255,132,150,.16); }
+        @media (max-width: 560px) {
+            body { padding: 18px 12px; }
+            .card { border-radius: 22px; }
+            .timer-grid { gap: 8px; }
+            .timer-box { padding: 15px 4px 12px; border-radius: 13px; }
+            .time-label { font-size: .59rem; letter-spacing: .08em; }
+            .message { font-size: .87rem; }
         }
-
-        .quiz-btns {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
         }
-
-        .quiz-btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s;
-            font-size: 0.95rem;
-        }
-        .btn-sim { background: #0077b6; color: white; }
-        .btn-sim:hover { background: #0096c7; }
-        .btn-nao { background: #333; color: #a2a2a2; }
-        .btn-nao:hover { background: #444; color: #fff; }
-
-        /* --- MODO CRISE --- */
-        .container.alert-mode {
-            border-color: #d90429;
-            box-shadow: 0 0 35px rgba(217, 4, 41, 0.4);
-        }
-        .container.alert-mode h1          { color: #d90429; }
-        .container.alert-mode .time-number { color: #d90429; }
     </style>
 </head>
 <body>
-
-    <div class="container" id="main-container">
-
-        <!-- Botão oculto até atingir TARGET_DAYS -->
-        <button class="meta-btn" id="trigger-btn" style="display: none;" onclick="openQuiz()">
-            🎉 EXPANDIR RELATÓRIO DE METAS 🎉
-        </button>
-
-        <div class="spiral-icon" id="spiral-logo">🌀</div>
-
-        <!-- Mascote 3D — carrega em background desde o início, aparece após o quiz -->
-        <div id="pet-container">
-
-            <!-- Overlay de loading: visível até o modelo estar pronto -->
-            <div class="mascote-loading" id="mascote-loading">
-                <div class="loading-spinner"></div>
-                <span>Carregando mascote da depressão...</span>
+    <main class="page">
+        <section class="card" id="main-card" aria-labelledby="main-title">
+            <div class="eyebrow"><span class="sparkle" aria-hidden="true">✦</span><span id="eyebrow-text">Relatório especial de superação</span></div>
+            <h1 id="main-title">Everton, <span>segue o jogo.</span></h1>
+            <p class="subtitle" id="subtitle">Um acompanhamento nada oficial desde o lendário encerramento do ciclo.</p>
+            <div class="anniversary-note" id="anniversary-note" role="status"></div>
+            <div class="countdown-panel" id="countdown-panel" role="timer" aria-live="off">
+                <p class="countdown-kicker" id="countdown-kicker">Contagem regressiva para o marco</p>
+                <div class="countdown-value" id="countdown-value">00:00:00</div>
+                <p class="countdown-caption" id="countdown-caption">horas · minutos · segundos · horário de Brasília</p>
             </div>
 
-            <model-viewer
-                id="mascote-3d"
-                src="mascote.glb"
-                animation-name="Idle"
-                alt="Everton Mascote 3D"
-                camera-controls
-                disable-zoom
-                autoplay
-                auto-rotate
-                auto-rotate-delay="3000"
-                rotation-per-second="30deg"
-                camera-orbit="0deg 90deg 120%"
-                field-of-view="35deg"
-                min-camera-orbit="auto auto 80%"
-                max-camera-orbit="auto auto 180%"
-                camera-target="0m 1.0m 0m"
-                bounds="tight">
-            </model-viewer>
-
-            <div class="animation-btns">
-                <button class="anim-btn active" id="btn-parar" onclick="trocarAnimacao('Idle', this)">▶ Animação</button>
+            <p class="section-label" id="counter-label">Tempo desde o fim do ciclo</p>
+            <p class="duration-words" id="duration-words" aria-live="polite">Calculando o tempo oficial...</p>
+            <div class="timer-grid" aria-label="Tempo decorrido em anos, meses, dias e horas">
+                <div class="timer-box"><span class="time-number" id="years">0</span><span class="time-label" id="years-label">Anos</span></div>
+                <div class="timer-box"><span class="time-number" id="months">0</span><span class="time-label" id="months-label">Meses</span></div>
+                <div class="timer-box"><span class="time-number" id="days">0</span><span class="time-label" id="days-label">Dias</span></div>
+                <div class="timer-box"><span class="time-number" id="hours">00</span><span class="time-label" id="hours-label">Horas</span></div>
             </div>
-        </div>
+            <p class="subclock">e <strong><span id="minutes">00</span> min <span id="seconds">00</span> s</strong> de atualização em tempo real</p>
+            <p class="message" id="dynamic-message"><span class="sparkle" aria-hidden="true">✦</span> Inicializando o departamento de estatísticas emocionais...</p>
 
-        <h1 id="main-title">Everton Luidy</h1>
-        <div class="subtitle" id="main-subtitle">"100% Superado" da Ana Flavia</div>
-
-        <div class="counter-title" id="counter-desc">Contagem regressiva da liberdade:</div>
-
-        <div class="timer-grid">
-            <div class="timer-box">
-                <span class="time-number" id="days">00</span>
-                <span class="time-label">Dias</span>
+            <div class="pet-container" id="pet-container">
+                <div class="pet-loading" id="pet-loading"><div class="spinner" id="mascot-spinner"></div><span id="mascot-status">Preparando o mascote...</span></div>
+                <button class="retry-mascot" id="retry-mascot" type="button">Tentar carregar o mascote novamente</button>
+                <model-viewer id="mascote-3d" alt="Mascote 3D do Everton" camera-controls disable-zoom autoplay auto-rotate auto-rotate-delay="3000" rotation-per-second="25deg" camera-orbit="0deg 90deg 120%" field-of-view="35deg" camera-target="0m 1.0m 0m" bounds="tight"></model-viewer>
             </div>
-            <div class="timer-box">
-                <span class="time-number" id="hours">00</span>
-                <span class="time-label">Horas</span>
-            </div>
-            <div class="timer-box">
-                <span class="time-number" id="minutes">00</span>
-                <span class="time-label">Min</span>
-            </div>
-            <div class="timer-box">
-                <span class="time-number" id="seconds">00</span>
-                <span class="time-label">Seg</span>
-            </div>
-        </div>
+            <button class="quiz-launch" id="trigger-btn" type="button">Abrir auditoria emocional</button>
+            <p class="milestone">Data oficial do encerramento: <strong id="start-date-label">8 de outubro de 2024, às 18h</strong><br>Relógio configurado no fuso de Brasília · UTC−3</p>
+            <p class="footer">Feito com carinho, dados duvidosos e zero autorização do departamento de ex.</p>
+        </section>
+    </main>
 
-        <div class="message-area" id="dynamic-message">
-            Analisando bancos de dados de arquivos ocultos...
-        </div>
-
-        <div class="highlight-phrase" id="bottom-phrase">
-            Já apagou as fotos (estão na pasta oculta).
-        </div>
-
-        <div class="footer">
-            O fim do ciclo: 08/10/2024 às 18:00
-        </div>
-    </div>
-
-    <!-- Modal do Quiz -->
-    <div class="modal-overlay" id="quiz-modal">
+    <div class="modal-overlay" id="quiz-modal" role="dialog" aria-modal="true" aria-labelledby="quiz-title">
         <div class="modal">
-            <h3>Everton, de forma honesta...<br>Você realmente superou a Ana Flávia?</h3>
-            <div class="quiz-btns">
-                <button class="quiz-btn btn-sim" onclick="quizAnswer(true)">Sim, totalmente!</button>
-                <button class="quiz-btn btn-nao" onclick="quizAnswer(false)">Não, confesso...</button>
+            <h2 id="quiz-title">Everton, com toda a sinceridade…<br>já superou 100%?</h2>
+            <div class="quiz-buttons">
+                <button class="quiz-button primary" type="button" onclick="quizAnswer(true)">Sim, totalmente!</button>
+                <button class="quiz-button" type="button" onclick="quizAnswer(false)">Ainda estou em análise</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ─── Configurações ─────────────────────────────────────────────────────────
-        const startDate  = new Date('2024-10-08T18:00:00');
-        const TARGET_DAYS = 590;
-
+        // Horário de referência preservado do site original: 08/10/2024 às 18h em Brasília.
+        const START = new Date('2024-10-08T18:00:00-03:00');
+        const TIME_ZONE = 'America/Sao_Paulo';
+        const numberFormat = new Intl.NumberFormat('pt-BR');
         const messages = [
-            "Tempo exato de superação analítica em andamento.",
-            "Varredura concluída: 0 indícios reais de esquecimento.",
-            "Diz que superou, mas ouve a playlist triste de madrugada.",
-            "Ele jura que nem lembra mais dela...",
-            "A Ana Flavia segue vivendo no aluguel grátis na mente dele."
+            'Relatório atualizado: o tempo passa, mas o grupo dos amigos não esquece.',
+            'Dois anos de dados e nenhuma prova de que ele devolveu a playlist triste.',
+            'O sistema confirma: novas fases desbloqueadas. Recaídas? Não temos evidências (ainda).',
+            'Lembrete carinhoso: superação não é corrida. Mas esse placar ficou bonito.',
+            'Status do projeto: seguindo em frente com um nível suspeito de competência.'
         ];
+        let mascotLoaded = false;
+        let mascotRequested = false;
+        let mascotTimeout;
+        let elapsedDays = 0;
 
-        let forceMode  = false;
-        let globalDays = 0;
-
-        // ─── Timer ─────────────────────────────────────────────────────────────────
+        const zonedParts = new Intl.DateTimeFormat('en-GB', {
+            timeZone: TIME_ZONE, year: 'numeric', month: '2-digit', day: '2-digit',
+            hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+        });
+        function getParts(date) {
+            return Object.fromEntries(zonedParts.formatToParts(date)
+                .filter(part => part.type !== 'literal')
+                .map(part => [part.type, Number(part.value)]));
+        }
+        function calendarDifference(start, end) {
+            let years = end.year - start.year;
+            let months = end.month - start.month;
+            let days = end.day - start.day;
+            let hours = end.hour - start.hour;
+            let minutes = end.minute - start.minute;
+            let seconds = end.second - start.second;
+            if (seconds < 0) { seconds += 60; minutes--; }
+            if (minutes < 0) { minutes += 60; hours--; }
+            if (hours < 0) { hours += 24; days--; }
+            if (days < 0) {
+                months--;
+                days += new Date(Date.UTC(end.year, end.month - 1, 0)).getUTCDate();
+            }
+            if (months < 0) { months += 12; years--; }
+            return { years, months, days, hours, minutes, seconds };
+        }
+        function unit(value, singular, plural) {
+            return `${numberFormat.format(value)} ${value === 1 ? singular : plural}`;
+        }
+        function durationPhrase(d) {
+            const pieces = [];
+            if (d.years) pieces.push(unit(d.years, 'ano', 'anos'));
+            if (d.months) pieces.push(unit(d.months, 'mês', 'meses'));
+            if (d.days) pieces.push(unit(d.days, 'dia', 'dias'));
+            if (d.hours) pieces.push(unit(d.hours, 'hora', 'horas'));
+            if (!pieces.length) pieces.push('menos de uma hora');
+            if (pieces.length === 1) return pieces[0];
+            return `${pieces.slice(0, -1).join(', ')} e ${pieces.at(-1)}`;
+        }
         function updateTimer() {
-            const now        = new Date();
-            const difference = now - startDate;
+            const now = new Date();
+            const nowParts = getParts(now);
+            const startParts = getParts(START);
+            const diff = now >= START
+                ? calendarDifference(startParts, nowParts)
+                : { years: 0, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
+            elapsedDays = Math.max(0, Math.floor((now - START) / 86400000));
 
-            globalDays       = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours      = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes    = Math.floor((difference % (1000 * 60 * 60))      / (1000 * 60));
-            const seconds    = Math.floor((difference % (1000 * 60))           / 1000);
-
-            document.getElementById('days').textContent    = String(globalDays).padStart(2, '0');
-            document.getElementById('hours').textContent   = String(hours).padStart(2, '0');
-            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
-            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
-
-            // Exibe o botão quando atingir a meta
-            if (globalDays >= TARGET_DAYS && !forceMode) {
-                document.getElementById('trigger-btn').style.display = 'inline-block';
+            for (const key of ['years', 'months', 'days', 'hours']) {
+                document.getElementById(key).textContent = numberFormat.format(diff[key]);
+                document.getElementById(`${key}-label`).textContent = key === 'days'
+                    ? (diff.days === 1 ? 'Dia' : 'Dias')
+                    : key === 'hours' ? (diff.hours === 1 ? 'Hora' : 'Horas')
+                    : key === 'years' ? (diff.years === 1 ? 'Ano' : 'Anos')
+                    : (diff.months === 1 ? 'Mês' : 'Meses');
             }
+            document.getElementById('minutes').textContent = String(diff.minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(diff.seconds).padStart(2, '0');
+            document.getElementById('duration-words').textContent = now >= START
+                ? durationPhrase(diff)
+                : 'O relógio da superação começa às 18h.';
 
-            // Troca mensagem a cada 10 segundos
-            if (seconds % 10 === 0) {
-                const specialMessages = [
-                    `Atenção: ${globalDays} dias fingindo costume com maestria.`,
-                    `O contador marca ${globalDays} dias, mas o aluguel mental continua grátis.`,
-                    "O pet do sistema detectou recaídas emocionais recentes.",
-                    `Parabéns pelos mais de ${globalDays} dias de fingimento profissional!`,
-                    `Fase de ${globalDays} dias: Nível de negação continua no máximo.`
-                ];
-                const pool        = (globalDays >= TARGET_DAYS || forceMode) ? specialMessages : messages;
-                const randomIndex = Math.floor(Math.random() * pool.length);
-                document.getElementById('dynamic-message').textContent = pool[randomIndex];
+            const anniversaryToday = nowParts.month === 10 && nowParts.day === 8;
+            const anniversaryNote = document.getElementById('anniversary-note');
+            const countdownPanel = document.getElementById('countdown-panel');
+            const card = document.getElementById('main-card');
+            const title = document.getElementById('main-title');
+            const message = document.getElementById('dynamic-message');
+            if (anniversaryToday) {
+                const milestoneYears = nowParts.year - 2024;
+                const milestoneAt = new Date(`${nowParts.year}-10-08T18:00:00-03:00`);
+                card.classList.add('anniversary');
+                anniversaryNote.classList.add('visible');
+                if (now >= milestoneAt) {
+                    countdownPanel.classList.remove('visible');
+                    document.getElementById('eyebrow-text').textContent = `Marco desbloqueado: ${milestoneYears} anos`;
+                    title.innerHTML = `${numberFormat.format(milestoneYears)} anos de <span>história vencida.</span>`;
+                    anniversaryNote.innerHTML = `<strong>Hoje o ciclo completa ${unit(milestoneYears, 'ano', 'anos')}.</strong> Conquista desbloqueada: seguir em frente com estilo.`;
+                    message.innerHTML = '<span class="sparkle" aria-hidden="true">✦</span> Dois anos oficialmente completos. O sistema registra progresso e recomenda comemoração — sem mandar mensagem para a ex.';
+                } else {
+                    const hoursLeft = Math.floor((milestoneAt - now) / 3600000);
+                    const minutesLeft = Math.floor(((milestoneAt - now) % 3600000) / 60000);
+                    const secondsLeft = Math.ceil((milestoneAt - now) / 1000);
+                    const countdownHours = Math.floor(secondsLeft / 3600);
+                    const countdownMinutes = Math.floor((secondsLeft % 3600) / 60);
+                    const countdownSeconds = secondsLeft % 60;
+                    countdownPanel.classList.add('visible');
+                    document.getElementById('countdown-value').textContent = [countdownHours, countdownMinutes, countdownSeconds].map(value => String(value).padStart(2, '0')).join(':');
+                    document.getElementById('countdown-kicker').textContent = `Contagem regressiva para ${milestoneYears} anos`;
+                    document.getElementById('countdown-caption').textContent = 'horas · minutos · segundos · hoje às 18h, horário de Brasília';
+                    document.getElementById('eyebrow-text').textContent = `Hoje: aniversário de ${milestoneYears} anos`;
+                    title.innerHTML = `O grande marco <span>é hoje.</span>`;
+                    anniversaryNote.innerHTML = `<strong>Às 18h, são ${unit(milestoneYears, 'ano', 'anos')} oficiais.</strong> Faltam ${hoursLeft}h ${String(minutesLeft).padStart(2, '0')}min para desbloquear a conquista.`;
+                    message.innerHTML = '<span class="sparkle" aria-hidden="true">✦</span> Dia de aniversário do término: serenidade, bolo e nenhuma recaída por impulso.';
+                }
+            } else {
+                card.classList.remove('anniversary');
+                anniversaryNote.classList.remove('visible');
+                countdownPanel.classList.remove('visible');
+                document.getElementById('eyebrow-text').textContent = 'Relatório especial de superação';
+                title.innerHTML = 'Everton, <span>segue o jogo.</span>';
+                if (now.getSeconds() % 15 === 0) {
+                    message.innerHTML = `<span class="sparkle" aria-hidden="true">✦</span> ${messages[Math.floor(Math.random() * messages.length)]}`;
+                }
             }
+            if (elapsedDays >= 590) document.getElementById('trigger-btn').style.display = 'inline-block';
         }
 
-        // ─── Quiz ──────────────────────────────────────────────────────────────────
-        function openQuiz() {
-            document.getElementById('quiz-modal').classList.add('active');
-        }
-
+        function openQuiz() { document.getElementById('quiz-modal').classList.add('active'); }
         function quizAnswer(answeredYes) {
             document.getElementById('quiz-modal').classList.remove('active');
-
-            if (answeredYes) {
-                alert("❌ SISTEMA DE VERIFICAÇÃO: Mentira detectada. Quem supera não clica em botões interativos para provar nada. Iniciando penalidade...");
-            } else {
-                alert(`🩹 Humildade computada com sucesso! Mas saiba que ${globalDays} dias é só o começo do tratamento.`);
-            }
-
-            transformInterface();
-        }
-
-        // ─── Pré-carrega o modelo assim que a página abre ─────────────────────────
-        // O model-viewer está no DOM desde o início (só invisível via CSS),
-        // então o browser começa o download imediatamente.
-        (function iniciarPreload() {
-            const mascote = document.getElementById('mascote-3d');
-            mascote.addEventListener('load', function () {
-                mascoteCarregado = true;
-                mascote.play({ repetitions: Infinity });
-                // Se o quiz já foi respondido, mostra na hora
-                if (forceMode) mostrarMascote();
-            });
-        })();
-
-        let mascoteCarregado = false;
-
-        function mostrarMascote() {
-            const mascote  = document.getElementById('mascote-3d');
-            const loading  = document.getElementById('mascote-loading');
-            loading.style.display = 'none';
-            mascote.classList.add('pronto');
-        }
-
-        // ─── Transformação de Interface ────────────────────────────────────────────
-        function transformInterface() {
-            forceMode = true;
-
-            document.getElementById('main-container').classList.add('alert-mode');
-            document.getElementById('trigger-btn').style.display  = 'none';
-            document.getElementById('spiral-logo').style.display  = 'none';
-
-            // Exibe o container (spinner já visível enquanto carrega)
+            const message = answeredYes
+                ? 'Verificação concluída: confiança detectada. O departamento seguirá monitorando, por pura formalidade.'
+                : `Honestidade registrada. Já são ${durationPhrase(calendarDifference(getParts(START), getParts(new Date())))} de análise — cada coisa no seu tempo.`;
+            document.getElementById('main-card').classList.add('crisis');
+            document.getElementById('eyebrow-text').textContent = 'Modo sinceridade ativado';
+            document.getElementById('main-title').innerHTML = 'Auditoria <span>em andamento.</span>';
+            document.getElementById('subtitle').textContent = 'O sistema convocou seu mascote especialista em recomeços.';
+            document.getElementById('dynamic-message').textContent = message;
             document.getElementById('pet-container').style.display = 'block';
-
-            // Se o modelo já terminou de carregar em background, mostra imediatamente
-            if (mascoteCarregado) mostrarMascote();
-
-            document.getElementById('main-title').textContent     = `MODO CRISE: ${globalDays}+ DIAS`;
-            document.getElementById('main-subtitle').innerHTML    = `Mascote do sistema ativado.<br>Chegamos à marca de ${globalDays} dias e o choro é livre.`;
-            document.getElementById('counter-desc').textContent   = "Tempo oficial de negação crônica:";
-            document.getElementById('bottom-phrase').textContent  = "⚠️ Você pode clicar e girar o mascote para ver todos os ângulos da depressão.";
-            document.getElementById('dynamic-message').textContent = `Atenção: ${globalDays} dias fingindo costume com maestria.`;
+            loadMascot();
+            document.getElementById('pet-container').scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-
-        // ─── Troca de Animação do Mascote ──────────────────────────────────────────
-        function trocarAnimacao(nomeAnimacao, btnClicado) {
-            const mascote = document.getElementById('mascote-3d');
-
-            // Para a animação atual antes de trocar
-            mascote.pause();
-
-            // Define a nova animação
-            mascote.animationName = nomeAnimacao;
-
-            // Aguarda um frame para o model-viewer reconhecer a mudança
-            requestAnimationFrame(function () {
-                mascote.play({ repetitions: Infinity });
-            });
-
-            // Ajusta câmera conforme a animação (Capoeira é deitado, precisa de ângulo diferente)
-            if (nomeAnimacao === 'Capoeira') {
-                mascote.cameraOrbit  = '0deg 75deg 120%';
-                mascote.cameraTarget = '0m 0.5m 0m';
-            } else {
-                mascote.cameraOrbit  = '0deg 90deg 120%';
-                mascote.cameraTarget = '0m 1.0m 0m';
+        async function loadMascot() {
+            if (mascotLoaded) { showMascot(); return; }
+            if (mascotRequested) return;
+            mascotRequested = true;
+            const viewer = document.getElementById('mascote-3d');
+            const status = document.getElementById('mascot-status');
+            const spinner = document.getElementById('mascot-spinner');
+            const retry = document.getElementById('retry-mascot');
+            retry.style.display = 'none';
+            spinner.style.display = 'block';
+            status.textContent = 'Buscando o mascote 3D (arquivo de 29 MB)...';
+            try {
+                await import('https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js');
+                viewer.removeAttribute('src');
+                viewer.src = 'mascote.glb';
+                clearTimeout(mascotTimeout);
+                mascotTimeout = setTimeout(() => {
+                    if (mascotLoaded) return;
+                    spinner.style.display = 'none';
+                    status.textContent = 'O mascote está demorando, mas a contagem e a página continuam funcionando normalmente.';
+                    retry.style.display = 'inline-block';
+                    mascotRequested = false;
+                }, 12000);
+            } catch (error) {
+                mascotRequested = false;
+                spinner.style.display = 'none';
+                status.textContent = 'Não foi possível conectar ao carregador do mascote.';
+                retry.style.display = 'inline-block';
             }
-
-            // Feedback visual
-            document.querySelectorAll('.anim-btn').forEach(btn => btn.classList.remove('active'));
-            if (btnClicado) btnClicado.classList.add('active');
         }
-
-
-
-        // ─── Inicialização ─────────────────────────────────────────────────────────
+        function showMascot() {
+            mascotLoaded = true;
+            clearTimeout(mascotTimeout);
+            document.getElementById('pet-loading').style.display = 'none';
+            document.getElementById('retry-mascot').style.display = 'none';
+            document.getElementById('mascote-3d').classList.add('ready');
+        }
+        document.getElementById('trigger-btn').addEventListener('click', openQuiz);
+        document.getElementById('retry-mascot').addEventListener('click', loadMascot);
+        document.getElementById('mascote-3d').addEventListener('load', event => {
+            mascotLoaded = true;
+            event.currentTarget.play({ repetitions: Infinity });
+            if (document.getElementById('pet-container').style.display === 'block') showMascot();
+        });
+        document.getElementById('mascote-3d').addEventListener('error', () => {
+            clearTimeout(mascotTimeout);
+            mascotRequested = false;
+            document.getElementById('mascot-spinner').style.display = 'none';
+            document.getElementById('mascot-status').textContent = 'O arquivo do mascote não carregou. O resto do site está intacto.';
+            document.getElementById('retry-mascot').style.display = 'inline-block';
+        });
+        document.getElementById('quiz-modal').addEventListener('click', event => {
+            if (event.target.id === 'quiz-modal') event.currentTarget.classList.remove('active');
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') document.getElementById('quiz-modal').classList.remove('active');
+        });
+        document.getElementById('start-date-label').textContent = new Intl.DateTimeFormat('pt-BR', {
+            timeZone: TIME_ZONE, day: 'numeric', month: 'long', year: 'numeric'
+        }).format(START) + ', às 18h';
         updateTimer();
         setInterval(updateTimer, 1000);
-
-        // Pre-cache dos .glb em background
-        // Faz o download silencioso de todos os modelos assim que a pagina carrega.
-        // Quando o usuario abrir o mascote ou trocar animacao, o arquivo ja esta
-        // no cache do navegador - carregamento instantaneo.
-        // Pre-cache do modelo único
-        window.addEventListener('load', function () {
-            setTimeout(function () {
-                fetch('mascote.glb', { cache: 'force-cache' }).catch(function () {});
-            }, 1500);
-        });
     </script>
-
 </body>
 </html>
